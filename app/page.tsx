@@ -36,7 +36,7 @@ export default function Home() {
           </p>
         </div>
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <Link href="/dashboard" className="inline-block px-4 py-2 bg-blue-600 text-white rounded">
+          <Link href="/dashboard" replace className="inline-block px-4 py-2 bg-blue-600 text-white rounded">
           Go to Dashboard
         </Link>
           <a

@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   RiHome2Line,
   RiBox3Line,
   RiBarChart2Line,
   RiUser3Line,
-} from "@remixicon/react"
-import { useState } from "react"
+} from "@remixicon/react";
+import { useState } from "react";
 
 const menuItems = [
-  { label: "Overview", href: "/dashboard", icon: RiHome2Line },
+  { label: "Home", href: "/dashboard", icon: RiHome2Line },
   { label: "Items", href: "/dashboard/items", icon: RiBox3Line },
   { label: "Stock", href: "/dashboard/stock", icon: RiBarChart2Line },
   { label: "Account", href: "/dashboard/account", icon: RiUser3Line },
-]
+];
 
-export function ActivityBar() {
-  const pathname = usePathname()
-  const [expanded, setExpanded] = useState(false)
+export function SideBar() {
+  const pathname = usePathname();
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <>
@@ -35,8 +35,8 @@ export function ActivityBar() {
       >
         <nav className="flex flex-col py-4 space-y-4">
           {menuItems.map((item) => {
-            const Icon = item.icon
-            const active = pathname === item.href
+            const Icon = item.icon;
+            const active = pathname === item.href;
             return (
               <Link key={item.href} href={item.href}>
                 <div
@@ -61,7 +61,7 @@ export function ActivityBar() {
                   )}
                 </div>
               </Link>
-            )
+            );
           })}
         </nav>
       </motion.aside>
@@ -73,8 +73,8 @@ export function ActivityBar() {
         className="fixed bottom-0 left-0 right-0 z-50 flex justify-around bg-white border-t py-4 md:hidden"
       >
         {menuItems.map((item) => {
-          const Icon = item.icon
-          const active = pathname === item.href
+          const Icon = item.icon;
+          const active = pathname === item.href;
           return (
             <Link key={item.href} href={item.href}>
               <motion.div
@@ -87,9 +87,9 @@ export function ActivityBar() {
                 <span>{item.label}</span>
               </motion.div>
             </Link>
-          )
+          );
         })}
       </motion.nav>
     </>
-  )
+  );
 }
