@@ -1,12 +1,10 @@
-import { DashboardContent } from '@/components/dashboard/DashboardContent'
-import React from 'react'
+import { DashboardContent } from "@/components/dashboard/DashboardContent";
+import React from "react";
 
-const dashboard = () => {
+export default function dashboard() {
   return (
     <>
       <DashboardContent />
     </>
-  )
+  );
 }
-
-export default dashboard

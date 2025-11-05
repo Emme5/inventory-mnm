@@ -14,6 +14,8 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@remixicon/react": "^4.7.0",
+    "@tanstack/react-table": "^8.21.3",
+    "@zxing/library": "^0.21.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",
@@ -21,6 +23,7 @@
     "next": "16.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "react-zxing": "^2.1.0",
     "remixicon": "^4.7.0",
     "tailwind-merge": "^3.3.1"
   },

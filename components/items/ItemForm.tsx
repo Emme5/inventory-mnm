@@ -1,15 +1,17 @@
 "use client";
-
+//master List
 import { useState } from "react";
 import { RiQrCodeLine } from "@remixicon/react";
 import { FileUpload } from "../ui/FileUpload";
 import { Button } from "../ui/button";
+import dynamic from "next/dynamic";
 
-// แนะนำ lib สำหรับสแกน barcode/QR ใน PWA:
-// - react-barcode-scanner (เบา ใช้ BarcodeDetector API) https://www.npmjs.com/package/react-barcode-scanner
-// - scanbot-web-sdk (enterprise, รองรับ PWA เต็ม) https://scanbot.io
-// - strich.io (อีกตัวเลือก modern)
-// ตอนนี้เราจะ mock ไว้ก่อน
+const QrScan = dynamic(
+  () => import("@/components/camera/QrScan").then((mod) => mod.QrScan),
+  {
+    ssr: false,
+  }
+);
 
 export function ItemForm() {
   const [form, setForm] = useState({
@@ -20,15 +22,15 @@ export function ItemForm() {
     image: null as File | null,
   });
 
+  const [showScanner, setShowScanner] = useState(false);
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
   function handleScan() {
-    // TODO: integrate barcode scanner lib
-    alert("เปิดกล้องสแกน (mock)");
-    setForm((prev) => ({ ...prev, code: "1234567890123" }));
+    setShowScanner((prev) => !prev);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -72,6 +74,17 @@ export function ItemForm() {
             <RiQrCodeLine size={20} />
           </button>
         </div>
+
+        {showScanner && (
+          <div>
+            <QrScan
+              onResult={(value: string) => {
+                setForm((prev) => ({ ...prev, code: value }));
+                setShowScanner(false);
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Name */}
@@ -101,7 +114,9 @@ export function ItemForm() {
       {/* Image Upload */}
       <div>
         <label className="block text-sm font-medium mb-1">เพิ่มรูป</label>
-        <FileUpload onFileSelect={(file) => setForm({ ...form, image: file })} />
+        <FileUpload
+          onFileSelect={(file) => setForm({ ...form, image: file })}
+        />
       </div>
 
       {/* Save Button */}
