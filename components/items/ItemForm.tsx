@@ -13,9 +13,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import dynamic from "next/dynamic";
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { itemSchema, ItemFormValues } from "../schemas/ItemForm"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { itemSchema, ItemFormValues } from "../schemas/ItemForm";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const QrScan = dynamic(
   () => import("@/components/camera/QrScan").then((mod) => mod.QrScan),
@@ -38,14 +40,36 @@ export function ItemForm() {
 
   const [showScanner, setShowScanner] = useState(false);
 
-  function onSubmit(values: ItemFormValues) {
-    console.log("Form Data:", values);
-  }
+  const mutation = useMutation({
+    mutationFn: async (values: ItemFormValues) => {
+      const res = await fetch("/api/items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      if (!res.ok) throw new Error("Failed to save item");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast.success("บันทึกข้อมูลสำเร็จ ✅");
+      form.reset({
+        // 👈 เคลียร์ค่าในฟอร์ม
+        id: "SMH-0001",
+        code: "",
+        name: "",
+        quantity: 0,
+        image: null,
+      });
+    },
+    onError: () => {
+      toast.error("เกิดข้อผิดพลาด ❌ BarCode ซ้ำ");
+    },
+  });
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((values) => mutation.mutate(values))}
         className="space-y-6 max-w-lg mx-auto bg-white p-6 rounded-lg shadow"
       >
         {/* ID */}
@@ -116,7 +140,11 @@ export function ItemForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>จำนวน</FormLabel>
-              <Input type="number" {...field} />
+              <Input
+                type="number"
+                {...field}
+                onChange={(e) => field.onChange(e.target.valueAsNumber)}
+              />
               <FormMessage />
             </FormItem>
           )}
@@ -137,9 +165,8 @@ export function ItemForm() {
           )}
         />
 
-        {/* Save Button */}
-        <Button type="submit" className="w-full">
-          Save
+        <Button type="submit" disabled={mutation.isPending} className="w-full">
+          {mutation.isPending ? "Saving..." : "Save"}
         </Button>
       </form>
     </Form>
