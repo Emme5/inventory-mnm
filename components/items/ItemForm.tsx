@@ -1,5 +1,5 @@
 "use client";
-//master List
+
 import { useState } from "react";
 import { RiQrCodeLine } from "@remixicon/react";
 import { FileUpload } from "../ui/FileUpload";

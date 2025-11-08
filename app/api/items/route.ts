@@ -28,3 +28,4 @@ export async function GET() {
   const items = await prisma.item.findMany();
   return NextResponse.json(items);
 }
+

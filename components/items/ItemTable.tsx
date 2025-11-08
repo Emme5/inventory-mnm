@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   ColumnDef,
   useReactTable,
@@ -8,9 +9,8 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
   getFilteredRowModel,
-  getSelectedRowModel,
 } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Item } from "@/types/item";
@@ -27,10 +27,33 @@ import {
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
 } from "../ui/dropdown-menu";
+import { toast } from "sonner";
+import { ConfirmDialog } from "../ui/confirm-dialog";
+import { ItemEditDialog } from "./ItemEditDialog";
 
-export function ItemTable({ items }: { items: Item[] }) {
+export function ItemTable() {
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const queryClient = useQueryClient();
+  const [deleteTargets, setDeleteTargets] = React.useState<Item[]>([]);
+  const [editItem, setEditItem] = React.useState<Item | null>(null);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      for (const id of ids) {
+        const res = await fetch(`/api/items/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Failed to delete item " + id);
+      }
+      return { success: true };
+    },
+    onSuccess: (_, ids) => {
+      toast.success(`ลบข้อมูลสำเร็จ ✅ (${ids.length} รายการ)`);
+      queryClient.invalidateQueries({ queryKey: ["items"] });
+    },
+    onError: () => {
+      toast.error("เกิดข้อผิดพลาด ❌");
+    },
+  });
 
   const { data: queryItems = [], isLoading } = useQuery({
     queryKey: ["items"],
@@ -74,7 +97,7 @@ export function ItemTable({ items }: { items: Item[] }) {
             : "⇅"}
         </button>
       ),
-      filterFn: "includesString"
+      filterFn: "includesString",
     },
   ];
 
@@ -89,7 +112,6 @@ export function ItemTable({ items }: { items: Item[] }) {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getSelectedRowModel: getSelectedRowModel(),
   });
 
   if (isLoading) return <p>Loading...</p>;
@@ -159,24 +181,67 @@ export function ItemTable({ items }: { items: Item[] }) {
                 </tr>
               </ContextMenuTrigger>
               <ContextMenuContent>
+                {/* คลิกขวาแล้วลบ พร้อมเงื่อนไขเมื่อลบหลายรายการ */}
+                {table.getSelectedRowModel().rows.length > 1 ? (
+                  <ContextMenuItem
+                    className="text-red-600"
+                    onClick={() =>
+                      setDeleteTargets(
+                        table.getSelectedRowModel().rows.map((r) => r.original)
+                      )
+                    }
+                  >
+                    Delete Selected
+                  </ContextMenuItem>
+                ) : (
+                  <ContextMenuItem
+                    className="text-red-600"
+                    onClick={() => setDeleteTargets([row.original])}
+                  >
+                    Delete
+                  </ContextMenuItem>
+                )}
+
                 <ContextMenuItem
-                  onClick={() => console.log("Edit", row.original)}
+                  className="text-gray-600"
+                  onClick={() => setEditItem(row.original)}
                 >
-                  Edit
-                </ContextMenuItem>
-                <ContextMenuItem
-                  onClick={() => console.log("Delete", row.original)}
-                  className="text-red-600"
-                >
-                  Delete
-                </ContextMenuItem>
-                <ContextMenuItem
-                  onClick={() => console.log("View", row.original)}
-                  className="text-blue-600"
-                >
-                  View Detail
+                  Preview
                 </ContextMenuItem>
               </ContextMenuContent>
+
+              {/* Alert Modal */}
+              {deleteTargets.length > 0 && (
+                <ConfirmDialog
+                  open={deleteTargets.length > 0}
+                  onOpenChange={(open) => !open && setDeleteTargets([])}
+                  title="คุณแน่ใจหรือไม่?"
+                  description={`คุณกำลังจะลบ ${deleteTargets.length} รายการ`}
+                  onConfirm={() => {
+                    deleteMutation.mutate(deleteTargets.map((item) => item.id));
+                    setDeleteTargets([]);
+                  }}
+                />
+              )}
+
+              <ItemEditDialog
+                open={!!editItem}
+                onOpenChange={(open) => !open && setEditItem(null)}
+                item={editItem}
+                onSave={async (values) => {
+                  const res = await fetch(`/api/items/${values.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(values),
+                  });
+                  if (res.ok) {
+                    toast.success("แก้ไขข้อมูลสำเร็จ ✅");
+                    queryClient.invalidateQueries({ queryKey: ["items"] });
+                  } else {
+                    toast.error("แก้ไขไม่สำเร็จ ❌");
+                  }
+                }}
+              />
             </ContextMenu>
           ))}
         </tbody>
