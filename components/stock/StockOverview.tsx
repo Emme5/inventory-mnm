@@ -1,32 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "../ui/button"
-
-type StockItem = {
-  id: string
-  name: string
-  quantity: number
-}
-
-type Movement = {
-  id: number
-  item: string
-  type: "in" | "out"
-  quantity: number
-  date: string
-}
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Item, Movement } from "@/types/item";
+import { useQuery } from "@tanstack/react-query";
 
 export function StockOverview() {
-  const [stock, setStock] = useState<StockItem[]>([
-    { id: "SMH-0001", name: "สินค้า A", quantity: 120 },
-    { id: "SMH-0002", name: "สินค้า B", quantity: 8 },
-  ])
+  const { data: items = [], isLoading } = useQuery<Item[]>({
+    queryKey: ["items"],
+    queryFn: async () => {
+      const res = await fetch("/api/items");
+      if (!res.ok) throw new Error("Failed to fetch items");
+      return res.json();
+    },
+  });
 
   const [movements] = useState<Movement[]>([
-    { id: 1, item: "สินค้า A", type: "in", quantity: 20, date: "2025-11-05 09:00" },
-    { id: 2, item: "สินค้า B", type: "out", quantity: 5, date: "2025-11-05 10:15" },
-  ])
+    {
+      id: 1,
+      item: "สินค้า A",
+      type: "in",
+      quantity: 20,
+      date: "2025-11-05 09:00",
+    },
+    {
+      id: 2,
+      item: "สินค้า B",
+      type: "out",
+      quantity: 5,
+      date: "2025-11-05 10:15",
+    },
+  ]);
+
+  if (isLoading) {
+  return <div>กำลังโหลดข้อมูล...</div>
+}
 
   return (
     <div className="space-y-8">
@@ -42,7 +50,7 @@ export function StockOverview() {
             </tr>
           </thead>
           <tbody>
-            {stock.map((item) => (
+            {items.map((item) => (
               <tr key={item.id}>
                 <td className="border px-3 py-2">{item.id}</td>
                 <td className="border px-3 py-2">{item.name}</td>
@@ -55,13 +63,21 @@ export function StockOverview() {
 
       {/* จำนวนการเคลื่อนไหวล่าสุด */}
       <section>
-        <h2 className="text-lg font-semibold mb-2">การเคลื่อนไหวล่าสุด (วันนี้)</h2>
+        <h2 className="text-lg font-semibold mb-2">
+          การเคลื่อนไหวล่าสุด (วันนี้)
+        </h2>
         <div className="flex gap-4">
           <div className="flex-1 bg-green-100 text-green-700 p-4 rounded">
-            In: {movements.filter((m) => m.type === "in").reduce((sum, m) => sum + m.quantity, 0)}
+            In:{" "}
+            {movements
+              .filter((m) => m.type === "in")
+              .reduce((sum, m) => sum + m.quantity, 0)}
           </div>
           <div className="flex-1 bg-red-100 text-red-700 p-4 rounded">
-            Out: {movements.filter((m) => m.type === "out").reduce((sum, m) => sum + m.quantity, 0)}
+            Out:{" "}
+            {movements
+              .filter((m) => m.type === "out")
+              .reduce((sum, m) => sum + m.quantity, 0)}
           </div>
         </div>
       </section>
@@ -82,7 +98,11 @@ export function StockOverview() {
             {movements.map((m) => (
               <tr key={m.id}>
                 <td className="border px-3 py-2">{m.item}</td>
-                <td className={`border px-3 py-2 ${m.type === "in" ? "text-green-600" : "text-red-600"}`}>
+                <td
+                  className={`border px-3 py-2 ${
+                    m.type === "in" ? "text-green-600" : "text-red-600"
+                  }`}
+                >
                   {m.type === "in" ? "เข้า" : "ออก"}
                 </td>
                 <td className="border px-3 py-2">{m.quantity}</td>
@@ -97,8 +117,7 @@ export function StockOverview() {
       <section>
         <Button
           onClick={() => {
-            // TODO: redirect ไป stock/check
-            window.location.href = "/dashboard/stock/check"
+            window.location.href = "/dashboard/stock/check";
           }}
           className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
         >
@@ -106,5 +125,5 @@ export function StockOverview() {
         </Button>
       </section>
     </div>
-  )
+  );
 }
