@@ -1,10 +1,16 @@
 import { DashboardStats } from "./DashboardStats";
+import { ManualScanOut } from "../ManualScanOut";
 
 export function DashboardContent() {
   return (
     <div className="space-y-8">
       {/* สรุปตัวเลข */}
       <DashboardStats />
+
+      <section className="text-lg font-semibold mb-4">
+        <h2>เอาของออก (Manual)</h2>
+        <ManualScanOut />
+      </section>
 
       {/* ส่วนอื่น ๆ เช่น กราฟ, รายการล่าสุด */}
       <section>
@@ -21,5 +27,5 @@ export function DashboardContent() {
         </div>
       </section>
     </div>
-  )
+  );
 }
