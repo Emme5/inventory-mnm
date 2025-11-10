@@ -8,7 +8,7 @@ export function DashboardContent() {
       <DashboardStats />
 
       <section className="text-lg font-semibold mb-4">
-        <h2>เอาของออก (Manual)</h2>
+        <h2>เอาของออกแบบ (Manual)</h2>
         <ManualScanOut />
       </section>
 

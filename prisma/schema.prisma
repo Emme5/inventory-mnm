@@ -28,3 +28,10 @@ model StockMovement {
 
   item Item @relation(fields: [itemId], references: [id])
 }
+
+model SystemStats {
+  id           String   @id @default(uuid())
+  totalCreated Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
