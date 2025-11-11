@@ -7,9 +7,11 @@ import {
   RiCheckLine,
   RiScanLine,
 } from "@remixicon/react";
+import type { Stats } from "@/types/item";
+import { Skeleton } from "../ui/skeleton";
 
 export function DashboardStats() {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
     fetch("/api/stats")
@@ -17,30 +19,47 @@ export function DashboardStats() {
       .then((data) => setStats(data));
   }, []);
 
-  if (!stats) return <p>Loading...</p>;
+  if (!stats) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-4 rounded-lg border bg-white p-4 shadow-sm"
+          >
+            <Skeleton className="h-12 w-12 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-6 w-16" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   const items = [
     {
       label: "สินค้าทั้งหมด",
-      value: 1200,
+      value: stats.totalCreated,
       icon: RiBox3Line,
       color: "text-blue-600 bg-blue-50",
     },
     {
       label: "จำนวนรายการ",
-      value: 340,
+      value: stats.totalItems,
       icon: RiBarChart2Line,
       color: "text-green-600 bg-green-50",
     },
     {
       label: "คงเหลือ",
-      value: 980,
+      value: stats.remaining,
       icon: RiCheckLine,
       color: "text-purple-600 bg-purple-50",
     },
     {
       label: "สแกนออก",
-      value: 220,
+      value: stats.scanOut,
       icon: RiScanLine,
       color: "text-red-600 bg-red-50",
     },

@@ -2,26 +2,39 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useNoti } from "@/hooks/useNotifications";
 
 export function ManualScanOut() {
-  const [itemId, setItemId] = useState("");
+  const [code, setCode] = useState("");
   const [quantity, setQuantity] = useState(0);
+  const { addNotification } = useNoti()
 
   const handleScanOut = async () => {
-    if (!itemId || quantity <= 0) return;
+    if (!code || quantity <= 0) return;
 
-    const res = await fetch(`/api/items/${itemId}/scanout`, {
+    const res = await fetch(`/api/items/scanout`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ quantity }),
+      body: JSON.stringify({ code, quantity }),
     });
 
     if (res.ok) {
+      // เพิ่มตรงนี้ต่อ
       toast.success("✅ ScanOut สำเร็จ");
-      setItemId("");
+      setCode("");
       setQuantity(0);
     } else {
-      toast.error("❌ เกิดข้อผิดพลาด โปรดใส่ข้อมูลให้ถูกต้อง");
+      const data = await res.json();
+
+      if (data.error === "Item not found") {
+        toast.error("❌ เกิดข้อผิดพลาด กรอก Code ID ผิด");
+      } else if (data.error === "Not enough stock") {
+        toast.error("❌ จำนวนที่ต้องการมากกว่าที่เหลืออยู่");
+      } else if (data.error === "Out of stock") {
+        toast.warning("⚠️ สินค้าชิ้นนี้เหลือ 0 แล้ว");
+      } else {
+        toast.error("❌ เกิดข้อผิดพลาด");
+      }
     }
   };
 
@@ -29,9 +42,9 @@ export function ManualScanOut() {
     <div className="space-y-4">
       <input
         type="text"
-        placeholder="กรอก Items ID "
-        value={itemId}
-        onChange={(e) => setItemId(e.target.value)}
+        placeholder="กรอก Code ID "
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
         className="border rounded p-2 w-full"
       />
       <input
