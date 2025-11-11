@@ -4,7 +4,7 @@ import { RiCameraLine } from "@remixicon/react";
 import { QrScan } from "./QrScan";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { Item } from "@/types/item";
+import { Item } from "@/types/type";
 
 export function FloatingCamera() {
   const [open, setOpen] = useState(false);

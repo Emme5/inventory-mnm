@@ -13,7 +13,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { Item } from "@/types/item";
+import { Item } from "@/types/type";
 import {
   ContextMenu,
   ContextMenuTrigger,

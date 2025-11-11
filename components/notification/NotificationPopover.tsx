@@ -1,13 +1,31 @@
-"use client"
+"use client";
 
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useNoti } from "@/hooks/useNotifications"
-import { Notification } from "@/types/item"
-import { RiNotification3Line } from "@remixicon/react"
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { RiNotification3Line } from "@remixicon/react";
+import type { ApiMovement } from "@/types/type";
+import { useEffect, useState } from "react";
 
 export function NotificationPopover() {
-  const { notifications } = useNoti()   // ✅ ดึง state จาก global hook
+  const [notifications, setNotifications] = useState<ApiMovement[]>([]);
+
+  useEffect(() => {
+    console.log("Fetching notifications...");
+    const fetchData = async () => {
+      const res = await fetch("/api/notifications");
+      const json = await res.json();
+      console.log("API response:", json); // ✅ ดูว่าได้อะไรกลับมา
+      if (res.ok) {
+        const data: ApiMovement[] = await res.json();
+        setNotifications(data);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <Popover>
@@ -26,15 +44,29 @@ export function NotificationPopover() {
           {notifications.length === 0 ? (
             <p className="text-sm text-gray-500">ไม่มีการแจ้งเตือน</p>
           ) : (
-            notifications.map((n: Notification) => (
+            notifications.map((n) => (
               <div
                 key={n.id}
                 className="flex items-center gap-2 border-b py-2 text-sm"
               >
-                {n.icon}
-                <span>{n.message}</span>
+                <RiNotification3Line className="text-blue-500" />
+                <span>
+                  {n.type === "out" &&
+                    `นำสินค้า ${n.Item.name} ออกไป ${n.quantity} ชิ้น`}
+                  {n.type === "in" &&
+                    `เพิ่มสินค้า ${n.Item.name} เข้ามา ${n.quantity} ชิ้น`}
+                  {n.type === "adjust" &&
+                    `ปรับสินค้า ${n.Item.name} จำนวน ${n.quantity} ชิ้น`}
+                </span>
                 <span className="ml-auto text-xs text-gray-400">
-                  {n.createdAt.toLocaleTimeString()}
+                  {new Date(n.createdAt).toLocaleString("th-TH", {
+                    timeZone: "Asia/Bangkok",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </span>
               </div>
             ))
@@ -42,5 +74,5 @@ export function NotificationPopover() {
         </ScrollArea>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

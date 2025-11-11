@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Item, Movement } from "@/types/item";
+import { Item, Movement } from "@/types/type";
 import { useQuery } from "@tanstack/react-query";
 
 export function StockOverview() {

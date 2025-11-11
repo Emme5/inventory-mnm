@@ -7,7 +7,7 @@ import {
   RiCheckLine,
   RiScanLine,
 } from "@remixicon/react";
-import type { Stats } from "@/types/item";
+import type { Stats } from "@/types/type";
 import { Skeleton } from "../ui/skeleton";
 
 export function DashboardStats() {

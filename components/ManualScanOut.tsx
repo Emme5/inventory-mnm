@@ -2,12 +2,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useNoti } from "@/hooks/useNotifications";
 
 export function ManualScanOut() {
   const [code, setCode] = useState("");
   const [quantity, setQuantity] = useState(0);
-  const { addNotification } = useNoti()
 
   const handleScanOut = async () => {
     if (!code || quantity <= 0) return;
@@ -19,8 +17,10 @@ export function ManualScanOut() {
     });
 
     if (res.ok) {
-      // เพิ่มตรงนี้ต่อ
-      toast.success("✅ ScanOut สำเร็จ");
+      const data = await res.json();
+      toast.success(
+        `มีการนำสินค้า ${data.name} ออกไป ${data.taken} ชิ้น (เหลือ ${data.remaining} ชิ้น)`
+      );
       setCode("");
       setQuantity(0);
     } else {

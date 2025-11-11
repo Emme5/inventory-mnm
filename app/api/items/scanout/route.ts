@@ -23,9 +23,14 @@ export async function POST(req: Request) {
   });
 
   // บันทึก movement
-  await prisma.stockMovement.create({
+  const movement = await prisma.stockMovement.create({
     data: { itemId: item.id, type: "out", quantity },
   });
 
-  return NextResponse.json(updated);
+  return NextResponse.json({
+    name: updated.name,
+    taken: quantity,
+    remaining: updated.quantity,
+    movement,
+  });
 }
