@@ -6,40 +6,34 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { RiNotification3Line } from "@remixicon/react";
 import type { ApiMovement } from "@/types/type";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowBigUp, ArrowDownToLine, BellRing } from "lucide-react";
 
 export function NotificationPopover() {
-  const [notifications, setNotifications] = useState<ApiMovement[]>([]);
-
-  useEffect(() => {
-    console.log("Fetching notifications...");
-    const fetchData = async () => {
-      const res = await fetch("/api/notifications");
-      const json = await res.json();
-      console.log("API response:", json); // ✅ ดูว่าได้อะไรกลับมา
-      if (res.ok) {
-        const data: ApiMovement[] = await res.json();
-        setNotifications(data);
-      }
-    };
-    fetchData();
-  }, []);
+  const { data: notifications = [] } = useQuery<ApiMovement[]>({
+    queryKey: ["notifications"],
+    queryFn: async () => {
+      const res = await fetch("/api/movements");
+      if (!res.ok) throw new Error("Failed to fetch notifications");
+      return res.json();
+    },
+    refetchInterval: 5000,
+  });
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <button className="relative p-2 hover:bg-gray-100 rounded-full">
-          <RiNotification3Line size={20} />
+          <BellRing size={20} />
           {notifications.length > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">
+            <span className="absolute top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">
               {notifications.length}
             </span>
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-2">
+      <PopoverContent className="w-96 p-4">
         <ScrollArea className="h-64">
           {notifications.length === 0 ? (
             <p className="text-sm text-gray-500">ไม่มีการแจ้งเตือน</p>
@@ -47,16 +41,27 @@ export function NotificationPopover() {
             notifications.map((n) => (
               <div
                 key={n.id}
-                className="flex items-center gap-2 border-b py-2 text-sm"
+                className="flex items-center gap-2 border-b py-4 p-2 text-sm"
               >
-                <RiNotification3Line className="text-blue-500" />
+                {" "}
+                {n.type === "out" ? (
+                  <ArrowBigUp className="text-red-300" />
+                ) : (
+                  <ArrowDownToLine className="text-blue-300" />
+                )}
                 <span>
                   {n.type === "out" &&
-                    `นำสินค้า ${n.Item.name} ออกไป ${n.quantity} ชิ้น`}
+                    `นำสินค้า ${n.item?.name ?? "ไม่พบชื่อ"} ออกไป ${
+                      n.quantity
+                    } ชิ้น`}
                   {n.type === "in" &&
-                    `เพิ่มสินค้า ${n.Item.name} เข้ามา ${n.quantity} ชิ้น`}
+                    `เพิ่มสินค้า ${n.item?.name ?? "ไม่พบชื่อ"} เข้ามา ${
+                      n.quantity
+                    } ชิ้น`}
                   {n.type === "adjust" &&
-                    `ปรับสินค้า ${n.Item.name} จำนวน ${n.quantity} ชิ้น`}
+                    `ปรับสินค้า ${n.item?.name ?? "ไม่พบชื่อ"} จำนวน ${
+                      n.quantity
+                    } ชิ้น`}
                 </span>
                 <span className="ml-auto text-xs text-gray-400">
                   {new Date(n.createdAt).toLocaleString("th-TH", {

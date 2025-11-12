@@ -3,7 +3,7 @@ import { ManualScanOut } from "../ManualScanOut";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { RiDownloadLine, RiSearchLine } from "@remixicon/react";
+import { ArrowDownToLine, Search } from "lucide-react";
 
 export function DashboardContent() {
   return (
@@ -16,14 +16,14 @@ export function DashboardContent() {
       <div className="flex gap-4 mb-6 items-center justify-center">
         <Link href="/dashboard/items/add">
           <Button className="bg-green-600 hover:bg-green-700 text-white flex gap-2">
-            <RiDownloadLine size={18} />
+            <ArrowDownToLine size={18} />
             รับเข้า
           </Button>
         </Link>
 
         <Link href="/dashboard/stock">
           <Button className="bg-blue-600 hover:bg-blue-700 text-white flex gap-2">
-            <RiSearchLine size={18} />
+            <Search size={18} />
             เช็คสต็อค
           </Button>
         </Link>

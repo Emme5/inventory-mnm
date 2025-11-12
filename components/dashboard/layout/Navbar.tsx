@@ -1,9 +1,6 @@
 import Link from "next/link";
-import {
-  RiSearchLine,
-  RiUser3Line,
-} from "@remixicon/react";
 import { NotificationPopover } from "@/components/notification/NotificationPopover";
+import { Search, UserRound } from "lucide-react";
 
 export function Navbar() {
   return (
@@ -30,13 +27,13 @@ export function Navbar() {
         {/* Right actions */}
         <div className="flex items-center gap-4">
           <button className="p-2 hover:bg-gray-100 rounded-full">
-            <RiSearchLine size={20} />
+            <Search size={20} />
           </button>
 
           <NotificationPopover />
 
           <button className="p-2 hover:bg-gray-100 rounded-full">
-            <RiUser3Line size={20} />
+            <UserRound size={20} />
           </button>
         </div>
       </div>

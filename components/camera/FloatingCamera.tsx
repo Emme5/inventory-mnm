@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
-import { RiCameraLine } from "@remixicon/react";
 import { QrScan } from "./QrScan";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Item } from "@/types/type";
+import { Scan } from "lucide-react";
 
 export function FloatingCamera() {
   const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ export function FloatingCamera() {
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 my-16"
       >
-        <RiCameraLine size={24} />
+        <Scan size={24} />
       </button>
 
       {/* Camera Dialog */}

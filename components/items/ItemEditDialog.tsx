@@ -16,7 +16,7 @@ import { itemSchema, ItemFormValues } from "../schemas/ItemForm";
 import { Input } from "../ui/input";
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
-import { RiQrCodeLine } from "@remixicon/react";
+import { Scan } from "lucide-react";
 
 const QrScan = dynamic(
   () => import("@/components/camera/QrScan").then((mod) => mod.QrScan),
@@ -96,7 +96,7 @@ export function ItemEditDialog({
                         variant="outline"
                         onClick={() => setShowScanner((prev) => !prev)}
                       >
-                        <RiQrCodeLine size={20} />
+                        <Scan size={20} />
                       </Button>
                     </div>
                     {showScanner && (

@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "../ui/button";
-import { Item, Movement } from "@/types/type";
+import { Item, ApiMovement } from "@/types/type";
 import { useQuery } from "@tanstack/react-query";
 
 export function StockOverview() {
-  const { data: items = [], isLoading } = useQuery<Item[]>({
+  const { data: items = [], isLoading: isItemsLoading } = useQuery<Item[]>({
     queryKey: ["items"],
     queryFn: async () => {
       const res = await fetch("/api/items");
@@ -15,26 +14,19 @@ export function StockOverview() {
     },
   });
 
-  const [movements] = useState<Movement[]>([
-    {
-      id: 1,
-      item: "สินค้า A",
-      type: "in",
-      quantity: 20,
-      date: "2025-11-05 09:00",
+  const { data: movements = [] } = useQuery<ApiMovement[]>({
+    queryKey: ["movements"],
+    queryFn: async () => {
+      const res = await fetch("/api/movements");
+      if (!res.ok) throw new Error("Failed to fetch movements");
+      return res.json();
     },
-    {
-      id: 2,
-      item: "สินค้า B",
-      type: "out",
-      quantity: 5,
-      date: "2025-11-05 10:15",
-    },
-  ]);
+    refetchInterval: 5000,
+  });
 
-  if (isLoading) {
-  return <div>กำลังโหลดข้อมูล...</div>
-}
+  if (isItemsLoading) {
+    return <div>กำลังโหลดข้อมูล...</div>;
+  }
 
   return (
     <div className="space-y-8">
@@ -68,16 +60,28 @@ export function StockOverview() {
         </h2>
         <div className="flex gap-4">
           <div className="flex-1 bg-green-100 text-green-700 p-4 rounded">
-            In:{" "}
+            In :{" "}
             {movements
-              .filter((m) => m.type === "in")
-              .reduce((sum, m) => sum + m.quantity, 0)}
+              .filter(
+                (m) =>
+                  m.type === "in" &&
+                  new Date(m.createdAt).toDateString() ===
+                    new Date().toDateString()
+              )
+              .reduce((sum, m) => sum + m.quantity, 0)}{" "}
+            ชิ้น
           </div>
           <div className="flex-1 bg-red-100 text-red-700 p-4 rounded">
-            Out:{" "}
+            Out :{" "}
             {movements
-              .filter((m) => m.type === "out")
-              .reduce((sum, m) => sum + m.quantity, 0)}
+              .filter(
+                (m) =>
+                  m.type === "out" &&
+                  new Date(m.createdAt).toDateString() ===
+                    new Date().toDateString()
+              )
+              .reduce((sum, m) => sum + m.quantity, 0)}{" "}
+            ชิ้น
           </div>
         </div>
       </section>
@@ -97,7 +101,7 @@ export function StockOverview() {
           <tbody>
             {movements.map((m) => (
               <tr key={m.id}>
-                <td className="border px-3 py-2">{m.item}</td>
+                <td className="border px-3 py-2">{m.item.name}</td>
                 <td
                   className={`border px-3 py-2 ${
                     m.type === "in" ? "text-green-600" : "text-red-600"
@@ -106,7 +110,16 @@ export function StockOverview() {
                   {m.type === "in" ? "เข้า" : "ออก"}
                 </td>
                 <td className="border px-3 py-2">{m.quantity}</td>
-                <td className="border px-3 py-2">{m.date}</td>
+                <td className="border px-3 py-2">
+                  {new Date(m.createdAt).toLocaleString("th-TH", {
+                    timeZone: "Asia/Bangkok",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </td>
               </tr>
             ))}
           </tbody>

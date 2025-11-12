@@ -12,15 +12,7 @@ export type ApiMovement = {
   type: "in" | "out" | "adjust";
   quantity: number;
   createdAt: string;
-  Item: { name: string };
-};
-
-export type Movement = {
-  id: number;
-  item: string;
-  type: "in" | "out" | "adjust";
-  quantity: number;
-  date: string;
+  item: { name: string };
 };
 
 // รวม Item + Movements

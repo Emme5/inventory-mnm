@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  RiBox3Line,
-  RiBarChart2Line,
-  RiCheckLine,
-  RiScanLine,
-} from "@remixicon/react";
 import type { Stats } from "@/types/type";
 import { Skeleton } from "../ui/skeleton";
+import {
+  Boxes,
+  ChartNoAxesColumnIncreasing,
+  CheckLine,
+  ScanText,
+} from "lucide-react";
 
 export function DashboardStats() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -42,25 +42,25 @@ export function DashboardStats() {
     {
       label: "สินค้าทั้งหมด",
       value: stats.totalCreated,
-      icon: RiBox3Line,
+      icon: Boxes,
       color: "text-blue-600 bg-blue-50",
     },
     {
       label: "จำนวนรายการ",
       value: stats.totalItems,
-      icon: RiBarChart2Line,
+      icon: ChartNoAxesColumnIncreasing,
       color: "text-green-600 bg-green-50",
     },
     {
       label: "คงเหลือ",
       value: stats.remaining,
-      icon: RiCheckLine,
+      icon: CheckLine,
       color: "text-purple-600 bg-purple-50",
     },
     {
       label: "สแกนออก",
       value: stats.scanOut,
-      icon: RiScanLine,
+      icon: ScanText,
       color: "text-red-600 bg-red-50",
     },
   ];

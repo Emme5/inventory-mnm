@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { RiQrCodeLine } from "@remixicon/react";
 import { FileUpload } from "../ui/FileUpload";
 import { Button } from "../ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { itemSchema, ItemFormValues } from "../schemas/ItemForm";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Scan } from "lucide-react";
 
 const QrScan = dynamic(
   () => import("@/components/camera/QrScan").then((mod) => mod.QrScan),
@@ -102,7 +102,7 @@ export function ItemForm() {
                   variant="outline"
                   onClick={() => setShowScanner((prev) => !prev)}
                 >
-                  <RiQrCodeLine size={20} />
+                  <Scan size={20} />
                 </Button>
               </div>
               {showScanner && (

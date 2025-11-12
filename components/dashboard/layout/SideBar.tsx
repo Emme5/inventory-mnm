@@ -3,19 +3,14 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  RiHome2Line,
-  RiBox3Line,
-  RiBarChart2Line,
-  RiUser3Line,
-} from "@remixicon/react";
 import { useState } from "react";
+import { Boxes, LayoutDashboard, UserRound, Warehouse } from "lucide-react";
 
 const menuItems = [
-  { label: "Home", href: "/dashboard", icon: RiHome2Line },
-  { label: "Items", href: "/dashboard/items", icon: RiBox3Line },
-  { label: "Stock", href: "/dashboard/stock", icon: RiBarChart2Line },
-  { label: "Account", href: "/dashboard/account", icon: RiUser3Line },
+  { label: "Home", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Items", href: "/dashboard/items", icon: Boxes },
+  { label: "Stock", href: "/dashboard/stock", icon: Warehouse },
+  { label: "Account", href: "/dashboard/account", icon: UserRound },
 ];
 
 export function SideBar() {

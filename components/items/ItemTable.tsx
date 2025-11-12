@@ -216,7 +216,7 @@ export function ItemTable() {
                   open={deleteTargets.length > 0}
                   onOpenChange={(open) => !open && setDeleteTargets([])}
                   title="คุณแน่ใจหรือไม่?"
-                  description={`คุณกำลังจะลบ ${deleteTargets.length} รายการ`}
+                  description={`จะลบ ${deleteTargets.length} รายการออกจากระบบถาวร!`}
                   onConfirm={() => {
                     deleteMutation.mutate(deleteTargets.map((item) => item.id));
                     setDeleteTargets([]);

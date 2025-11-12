@@ -33,13 +33,19 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
+  console.log("DELETE id:", id);
 
   try {
+    await prisma.stockMovement.deleteMany({
+      where: { itemId: id },
+    });
+
     const deleted = await prisma.item.delete({
       where: { id },
     });
     return NextResponse.json({ success: true, deleted });
   } catch (error) {
+    console.error("Delete error:", error);
     return NextResponse.json(
       { error: "Failed to delete item", detail: String(error) },
       { status: 500 }

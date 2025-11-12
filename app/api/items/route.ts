@@ -14,6 +14,14 @@ export async function POST(req: Request) {
       },
     });
 
+    await prisma.stockMovement.create({
+      data: {
+        type: "in",
+        quantity: body.quantity,
+        itemId: item.id,
+      },
+    });
+
     return NextResponse.json(item, { status: 201 });
   } catch (error) {
     console.error(error);
@@ -28,4 +36,3 @@ export async function GET() {
   const items = await prisma.item.findMany();
   return NextResponse.json(items);
 }
-
