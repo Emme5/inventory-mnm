@@ -13,6 +13,7 @@ export async function PUT(
       where: { id },
       data: {
         code: body.code,
+        barcode: body.barcode,
         name: body.name,
         quantity: body.quantity,
         imageUrl: body.imageUrl,

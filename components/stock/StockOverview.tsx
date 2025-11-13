@@ -44,7 +44,7 @@ export function StockOverview() {
           <tbody>
             {items.map((item) => (
               <tr key={item.id}>
-                <td className="border px-3 py-2">{item.id}</td>
+                <td className="border px-3 py-2">{item.code}</td>
                 <td className="border px-3 py-2">{item.name}</td>
                 <td className="border px-3 py-2">{item.quantity}</td>
               </tr>

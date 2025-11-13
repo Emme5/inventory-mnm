@@ -11,7 +11,7 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button } from "../ui/button";
+import { Button, CopyButton } from "../ui/button";
 import Link from "next/link";
 import { Item } from "@/types/type";
 import {
@@ -82,8 +82,28 @@ export function ItemTable() {
         />
       ),
     },
-    { accessorKey: "id", header: "ID", filterFn: "includesString" },
-    { accessorKey: "code", header: "Code", filterFn: "includesString" },
+    {
+      accessorKey: "code",
+      header: "ID",
+      cell: ({ row }) => <span>{row.original.code}</span>,
+      filterFn: "includesString",
+    },
+    {
+      accessorKey: "barcode",
+      header: "BarCode",
+      cell: ({ row }) => {
+        const barcode = row.original.barcode ?? "";
+        return (
+          <div className="flex items-center gap-2">
+            <span>
+              {barcode.length > 12 ? barcode.slice(0, 12) + "..." : barcode}
+            </span>
+            <CopyButton value={row.original.barcode} />
+          </div>
+        );
+      },
+      filterFn: "includesString",
+    },
     { accessorKey: "name", header: "ชื่อสินค้า", filterFn: "includesString" },
     {
       accessorKey: "quantity",

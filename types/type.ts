@@ -1,6 +1,7 @@
 export type Item = {
   id: string;
   code: string;
+  barcode: string;
   name: string;
   quantity: number;
   imageUrl?: string | null;

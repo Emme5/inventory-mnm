@@ -43,8 +43,8 @@ export function ItemEditDialog({
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemSchema),
     defaultValues: item ?? {
-      id: "",
       code: "",
+      barcode: "",
       name: "",
       quantity: 0,
       image: null,
@@ -88,7 +88,21 @@ export function ItemEditDialog({
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Code</FormLabel>
+                    <FormLabel>ID (SMH-xxxx)</FormLabel>
+                    <Input
+                      {...field}
+                      readOnly
+                      className="bg-gray-100 text-gray-500"
+                    />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="barcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>BarCode</FormLabel>
                     <div className="flex gap-2">
                       <Input {...field} />
                       <Button
@@ -103,7 +117,7 @@ export function ItemEditDialog({
                       <div className="mt-3">
                         <QrScan
                           onResult={(value: string) => {
-                            form.setValue("code", value);
+                            form.setValue("barcode", value);
                             setShowScanner(false);
                           }}
                         />

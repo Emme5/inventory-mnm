@@ -5,9 +5,23 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
+    const lastItem = await prisma.item.findFirst({
+      where: { code: { startsWith: "SMH-" } },
+      orderBy: { code: "desc" },
+    });
+
+    const extractNumber = (code?: string) => {
+      const match = code?.match(/^SMH-(\d{1,})$/);
+      return match ? parseInt(match[1], 10) : 0;
+    };
+
+    const nextNumber = extractNumber(lastItem?.code) + 1;
+    const SystemCode = `SMH-${String(nextNumber).padStart(4, "0")}`;
+
     const item = await prisma.item.create({
       data: {
-        code: body.code,
+        code: SystemCode,
+        barcode: body.barcode,
         name: body.name,
         quantity: body.quantity,
         imageUrl: typeof body.image === "string" ? body.image : null,

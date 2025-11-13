@@ -30,8 +30,8 @@ export function ItemForm() {
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemSchema),
     defaultValues: {
-      id: "SMH-0001",
       code: "",
+      barcode: "",
       name: "",
       quantity: 0,
       image: null,
@@ -53,9 +53,8 @@ export function ItemForm() {
     onSuccess: () => {
       toast.success("บันทึกข้อมูลสำเร็จ ✅");
       form.reset({
-        // 👈 เคลียร์ค่าในฟอร์ม
-        id: "SMH-0001",
         code: "",
+        barcode: "",
         name: "",
         quantity: 0,
         image: null,
@@ -75,7 +74,7 @@ export function ItemForm() {
         {/* ID */}
         <FormField
           control={form.control}
-          name="id"
+          name="code"
           render={({ field }) => (
             <FormItem>
               <FormLabel>ID</FormLabel>
@@ -91,7 +90,7 @@ export function ItemForm() {
         {/* Code + Scan */}
         <FormField
           control={form.control}
-          name="code"
+          name="barcode"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Code (Barcode)</FormLabel>
@@ -109,7 +108,7 @@ export function ItemForm() {
                 <div className="mt-3">
                   <QrScan
                     onResult={(value: string) => {
-                      form.setValue("code", value);
+                      form.setValue("barcode", value);
                       setShowScanner(false);
                     }}
                   />

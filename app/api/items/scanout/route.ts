@@ -2,9 +2,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/utils/db";
 
 export async function POST(req: Request) {
-  const { code, quantity } = await req.json();
+  const { code, barcode, quantity } = await req.json();
 
-  const item = await prisma.item.findUnique({ where: { code } });
+  const item = await prisma.item.findFirst({
+    where: {
+      OR: [{ code: code ?? "" }, { barcode: barcode ?? "" }],
+    },
+  });
+
   if (!item) {
     return NextResponse.json({ error: "Item not found" }, { status: 404 });
   }
@@ -18,7 +23,7 @@ export async function POST(req: Request) {
   }
 
   const updated = await prisma.item.update({
-    where: { code },
+    where: { id: item.id },
     data: { quantity: item.quantity - quantity },
   });
 
