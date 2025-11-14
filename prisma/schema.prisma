@@ -9,25 +9,23 @@ datasource db {
 }
 
 model Item {
-  id        String   @id @default(cuid())
-  code      String   @unique
-  barcode   String?
+  id        String          @id @default(cuid())
+  code      String          @unique
   name      String
   quantity  Int
   imageUrl  String?
-  createdAt DateTime @default(now())
-
+  createdAt DateTime        @default(now())
+  barcode   String?
   movements StockMovement[]
 }
 
 model StockMovement {
   id        String   @id @default(cuid())
   itemId    String
-  type      String // "in" | "out" | "adjust"
+  type      String
   quantity  Int
   createdAt DateTime @default(now())
-
-  item Item @relation(fields: [itemId], references: [id])
+  item      Item     @relation(fields: [itemId], references: [id])
 }
 
 model SystemStats {
