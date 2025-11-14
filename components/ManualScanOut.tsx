@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Plus, Minus } from "lucide-react";
 
 export function ManualScanOut() {
   const [code, setCode] = useState("");
@@ -52,13 +53,35 @@ export function ManualScanOut() {
         }}
         className="border rounded p-2 w-full"
       />
-      <input
-        type="number"
-        placeholder="จำนวนที่จะเอาออก"
-        value={quantity}
-        onChange={(e) => setQuantity(Number(e.target.value))}
-        className="border rounded p-2 w-full"
-      />
+
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={() => setQuantity((q) => Math.max(0, q - 1))}
+        >
+          <Minus className="w-4 h-4" />
+        </Button>
+
+        <input
+          type="number"
+          placeholder="จำนวนที่จะเอาออก"
+          value={quantity}
+          onChange={(e) => setQuantity(Number(e.target.value))}
+          className="border rounded p-2 w-full text-center"
+        />
+
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={() => setQuantity((q) => q + 1)}
+        >
+          <Plus className="w-4 h-4" />
+        </Button>
+      </div>
+      
       <Button className="w-full bg-red-600 text-white" onClick={handleScanOut}>
         เอาของออก
       </Button>
