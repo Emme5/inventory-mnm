@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Inventory MNGR",
-  description: "An inventory management application built with Next.js",
+  description: "Inventory Management System PWA",
 };
 
 export default function RootLayout({
