@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import {
   ColumnDef,
   useReactTable,
@@ -12,7 +12,6 @@ import {
 } from "@tanstack/react-table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, CopyButton } from "../ui/button";
-import Link from "next/link";
 import { Item } from "@/types/type";
 import {
   ContextMenu,
@@ -29,14 +28,15 @@ import {
 } from "../ui/dropdown-menu";
 import { toast } from "sonner";
 import { ConfirmDialog } from "../ui/confirm-dialog";
-import { ItemEditDialog } from "./ItemEditDialog";
+import AddItemDrawer from "./AddItemDrawer";
+import ItemEditDrawer from "./ItemEditDrawer";
 
 export function ItemTable() {
-  const [columnVisibility, setColumnVisibility] = React.useState({});
-  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [columnVisibility, setColumnVisibility] = useState({});
+  const [globalFilter, setGlobalFilter] = useState("");
   const queryClient = useQueryClient();
-  const [deleteTargets, setDeleteTargets] = React.useState<Item[]>([]);
-  const [editItem, setEditItem] = React.useState<Item | null>(null);
+  const [deleteTargets, setDeleteTargets] = useState<Item[]>([]);
+  const [editItem, setEditItem] = useState<Item | null>(null);
 
   const deleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
@@ -163,9 +163,7 @@ export function ItemTable() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Link href="/dashboard/items/add">
-            <Button>+ Add Item</Button>
-          </Link>
+          <AddItemDrawer />
         </div>
       </div>
 
@@ -228,6 +226,9 @@ export function ItemTable() {
                 >
                   Preview
                 </ContextMenuItem>
+                <ContextMenuItem onClick={() => setEditItem(row.original)}>
+                  Edit
+                </ContextMenuItem>
               </ContextMenuContent>
 
               {/* Alert Modal */}
@@ -243,29 +244,17 @@ export function ItemTable() {
                   }}
                 />
               )}
-
-              <ItemEditDialog
-                open={!!editItem}
-                onOpenChange={(open) => !open && setEditItem(null)}
-                item={editItem}
-                onSave={async (values) => {
-                  const res = await fetch(`/api/items/${values.id}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(values),
-                  });
-                  if (res.ok) {
-                    toast.success("แก้ไขข้อมูลสำเร็จ ✅");
-                    queryClient.invalidateQueries({ queryKey: ["items"] });
-                  } else {
-                    toast.error("แก้ไขไม่สำเร็จ ❌");
-                  }
-                }}
-              />
             </ContextMenu>
           ))}
         </tbody>
       </table>
+      {editItem && (
+        <ItemEditDrawer
+          open={!!editItem}
+          onOpenChange={(open) => !open && setEditItem(null)}
+          item={editItem}
+        />
+      )}
 
       {/* Footer */}
       <div className="flex justify-between items-center text-sm text-gray-600">

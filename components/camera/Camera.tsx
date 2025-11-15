@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { Item } from "@/types/type";
 import { Scan } from "lucide-react";
 
-export function FloatingCamera() {
+export function Camera() {
   const [open, setOpen] = useState(false);
   const [scannedItem, setScannedItem] = useState<Item | null>(null);
   const [scanOutQty, setScanOutQty] = useState(0);
@@ -14,14 +14,14 @@ export function FloatingCamera() {
 
   return (
     <>
-      {/* Floating Button */}
-      <button
+      <Button
+        variant="ghost"
+        className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 my-16"
       >
-        <Scan size={24} />
-      </button>
-
+        <Scan size={25} />
+        
+      </Button>
       {/* Camera Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>

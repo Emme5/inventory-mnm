@@ -15,8 +15,6 @@ import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { itemSchema, ItemFormValues } from "../schemas/ItemForm";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { Scan } from "lucide-react";
 
 const QrScan = dynamic(
@@ -26,10 +24,16 @@ const QrScan = dynamic(
   }
 );
 
-export function ItemForm() {
+type ItemFormProps = {
+  initialValues?: ItemFormValues | null;
+  onSave: (values: ItemFormValues) => void;
+  onCancel: () => void;
+};
+
+export function ItemForm({ initialValues, onSave, onCancel }: ItemFormProps) {
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemSchema),
-    defaultValues: {
+    defaultValues: initialValues ?? {
       code: "",
       barcode: "",
       name: "",
@@ -40,36 +44,20 @@ export function ItemForm() {
 
   const [showScanner, setShowScanner] = useState(false);
 
-  const mutation = useMutation({
-    mutationFn: async (values: ItemFormValues) => {
-      const res = await fetch("/api/items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) throw new Error("Failed to save item");
-      return res.json();
-    },
-    onSuccess: () => {
-      toast.success("บันทึกข้อมูลสำเร็จ ✅");
-      form.reset({
-        code: "",
-        barcode: "",
-        name: "",
-        quantity: 0,
-        image: null,
-      });
-    },
-    onError: () => {
-      toast.error("เกิดข้อผิดพลาด ❌ BarCode ซ้ำ");
-    },
-  });
-
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((values) => mutation.mutate(values))}
-        className="space-y-6 max-w-lg mx-auto bg-white p-6 rounded-lg shadow"
+        onSubmit={form.handleSubmit((values) => {
+          onSave(values);
+          form.reset(initialValues ?? {
+            code: "",
+            barcode: "",
+            name: "",
+            quantity: 0,
+            image: null,
+          });
+        })}
+        className="space-y-6 bg-white p-6 rounded-lg shadow"
       >
         {/* ID */}
         <FormField
@@ -99,7 +87,7 @@ export function ItemForm() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setShowScanner((prev) => !prev)}
+                  onClick={() => setShowScanner((p) => !p)}
                 >
                   <Scan size={20} />
                 </Button>
@@ -164,9 +152,12 @@ export function ItemForm() {
           )}
         />
 
-        <Button type="submit" disabled={mutation.isPending} className="w-full">
-          {mutation.isPending ? "Saving..." : "Save"}
-        </Button>
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit">Save</Button>
+        </div>
       </form>
     </Form>
   );

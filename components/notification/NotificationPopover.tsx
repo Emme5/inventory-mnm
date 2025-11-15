@@ -18,7 +18,7 @@ export function NotificationPopover() {
       if (!res.ok) throw new Error("Failed to fetch notifications");
       return res.json();
     },
-    refetchInterval: 5000,
+    refetchInterval: 3000,
   });
 
   return (
