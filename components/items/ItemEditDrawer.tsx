@@ -21,8 +21,7 @@ export default function ItemEditDrawer({
 
   const mutation = useMutation({
     mutationFn: async (values: ItemFormValues) => {
-      // Use your stable identifier; if your API expects code instead of id, change here.
-      const id = values.id ?? values.code; // adjust to your schema
+      const id = values.id ?? values.code;
       const res = await fetch(`/api/items/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

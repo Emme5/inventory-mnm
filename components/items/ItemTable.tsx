@@ -269,7 +269,7 @@ export function ItemTable() {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            ก่อนหน้า
           </Button>
           <Button
             variant="outline"
@@ -277,7 +277,7 @@ export function ItemTable() {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            หน้าถัดไป
           </Button>
         </div>
       </div>
