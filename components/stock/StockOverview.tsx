@@ -3,9 +3,17 @@
 import { Button } from "../ui/button";
 import { Item, ApiMovement } from "@/types/type";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export function StockOverview() {
-  const { data: items = [], isLoading: isItemsLoading } = useQuery<Item[]>({
+  const [search, setSearch] = useState("");
+  const [stockPage, setStockPage] = useState(1);
+  const [movementPage, setMovementPage] = useState(1);
+
+  const stockPerPage = 10;
+  const movementPerPage = 20;
+
+    const { data: items = [], isLoading: isItemsLoading } = useQuery<Item[]>({
     queryKey: ["items"],
     queryFn: async () => {
       const res = await fetch("/api/items");
@@ -24,6 +32,36 @@ export function StockOverview() {
     refetchInterval: 5000,
   });
 
+  // กรองข้อมูลตาม search
+  const filteredItems = items.filter(
+    (item) =>
+      item.name.toLowerCase().includes(search.toLowerCase()) ||
+      item.code.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const filteredMovements = movements.filter(
+    (m) =>
+      m.item.name.toLowerCase().includes(search.toLowerCase()) ||
+      m.item.code.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // pagination สำหรับ stock
+  const totalStockPages = Math.ceil(filteredItems.length / stockPerPage);
+  const paginatedItems = filteredItems.slice(
+    (stockPage - 1) * stockPerPage,
+    stockPage * stockPerPage
+  );
+
+  // pagination สำหรับ movements
+  const totalMovementPages = Math.ceil(
+    filteredMovements.length / movementPerPage
+  );
+  const paginatedMovements = filteredMovements.slice(
+    (movementPage - 1) * movementPerPage,
+    movementPage * movementPerPage
+  );
+
+
   if (isItemsLoading) {
     return <div>กำลังโหลดข้อมูล...</div>;
   }
@@ -33,6 +71,40 @@ export function StockOverview() {
       {/* ตารางสต็อกสินค้า */}
       <section>
         <h2 className="text-lg font-semibold mb-2">ตารางสต็อกสินค้า</h2>
+
+        <input
+          type="text"
+          placeholder="ค้นหาสินค้า..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setStockPage(1);
+            setMovementPage(1);
+          }}
+          className="mb-4 px-3 py-2 border rounded w-full"
+        />
+
+        {/* Pagination */}
+        <div className="flex justify-between items-center pb-3">
+          <button
+            disabled={stockPage === 1}
+            onClick={() => setStockPage(stockPage - 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            ก่อนหน้า
+          </button>
+          <span>
+            หน้า {stockPage} / {totalStockPages}
+          </span>
+          <button
+            disabled={stockPage === totalStockPages}
+            onClick={() => setStockPage(stockPage + 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            ถัดไป
+          </button>
+        </div>
+
         <table className="w-full border-collapse border border-gray-300 text-sm">
           <thead className="bg-gray-100">
             <tr>
@@ -42,7 +114,7 @@ export function StockOverview() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {paginatedItems.map((item) => (
               <tr key={item.id}>
                 <td className="border px-3 py-2">{item.code}</td>
                 <td className="border px-3 py-2">{item.name}</td>
@@ -89,6 +161,27 @@ export function StockOverview() {
       {/* ประวัติการเคลื่อนไหว */}
       <section>
         <h2 className="text-lg font-semibold mb-2">ประวัติการเคลื่อนไหว</h2>
+
+        <div className="flex justify-between items-center pb-3">
+          <button
+            disabled={movementPage === 1}
+            onClick={() => setMovementPage(movementPage - 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            ก่อนหน้า
+          </button>
+          <span>
+            หน้า {movementPage} / {totalMovementPages}
+          </span>
+          <button
+            disabled={movementPage === totalMovementPages}
+            onClick={() => setMovementPage(movementPage + 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            ถัดไป
+          </button>
+        </div>
+
         <table className="w-full border-collapse border border-gray-300 text-sm">
           <thead className="bg-gray-100">
             <tr>
@@ -99,7 +192,7 @@ export function StockOverview() {
             </tr>
           </thead>
           <tbody>
-            {movements.map((m) => (
+            {paginatedMovements.map((m) => (
               <tr key={m.id}>
                 <td className="border px-3 py-2">{m.item.name}</td>
                 <td

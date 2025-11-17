@@ -167,6 +167,26 @@ export function ItemTable() {
         </div>
       </div>
 
+      {/* Pagination ui */}
+      <div className="flex justify-between gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          ก่อนหน้า
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          หน้าถัดไป
+        </Button>
+      </div>
+
       {/* Table */}
       <table className="w-full border-collapse border border-gray-200 rounded-md">
         <thead className="bg-gray-50">
@@ -256,30 +276,11 @@ export function ItemTable() {
         />
       )}
 
-      {/* Footer */}
       <div className="flex justify-between items-center text-sm text-gray-600">
         <span>
           {table.getSelectedRowModel().rows.length} of{" "}
           {table.getRowModel().rows.length} row(s) selected.
         </span>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            ก่อนหน้า
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            หน้าถัดไป
-          </Button>
-        </div>
       </div>
     </div>
   );

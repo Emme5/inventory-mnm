@@ -13,7 +13,10 @@ export type ApiMovement = {
   type: "in" | "out" | "adjust";
   quantity: number;
   createdAt: string;
-  item: { name: string };
+  item: {
+    code: string;
+    name: string;
+  };
 };
 
 // รวม Item + Movements

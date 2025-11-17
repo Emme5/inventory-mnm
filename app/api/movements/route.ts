@@ -6,7 +6,7 @@ export async function GET() {
     const movements = await prisma.stockMovement.findMany({
       orderBy: { createdAt: "desc" },
       take: 50, // ปรับจำนวนตามที่ต้องการ
-      include: { item: { select: { name: true } } },
+      include: { item: { select: { code: true, name: true } } },
     });
 
     return NextResponse.json(movements);
