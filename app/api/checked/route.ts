@@ -1,0 +1,33 @@
+import { prisma } from "@/utils/db";
+import { NextResponse } from "next/server";
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { itemId, actualCount, note } = body;
+
+    // ดึงข้อมูลสต็อกในระบบ
+    const item = await prisma.item.findUnique({ where: { id: itemId } });
+    if (!item) {
+      return NextResponse.json({ error: "Item not found" }, { status: 404 });
+    }
+
+    const difference = actualCount - item.quantity;
+
+    // บันทึกผลตรวจเช็ค
+    const check = await prisma.stockCheck.create({
+      data: {
+        itemId,
+        actualCount,
+        difference,
+        note,
+        checked: true,
+      },
+    });
+
+    return NextResponse.json(check);
+  } catch (error) {
+    console.error("Error saving stock check:", error);
+    return NextResponse.json({ error: "Failed to save check" }, { status: 500 });
+  }
+}

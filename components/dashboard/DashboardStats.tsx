@@ -10,7 +10,7 @@ import {
   ScanText,
 } from "lucide-react";
 
-export function DashboardStats() {
+export default function DashboardStats() {
   const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {

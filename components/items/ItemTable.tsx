@@ -31,7 +31,7 @@ import { ConfirmDialog } from "../ui/confirm-dialog";
 import AddItemDrawer from "./AddItemDrawer";
 import ItemEditDrawer from "./ItemEditDrawer";
 
-export function ItemTable() {
+export default function ItemTable() {
   const [columnVisibility, setColumnVisibility] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
   const queryClient = useQueryClient();

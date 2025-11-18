@@ -17,12 +17,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { itemSchema, ItemFormValues } from "../schemas/ItemForm";
 import { Scan } from "lucide-react";
 
-const QrScan = dynamic(
-  () => import("@/components/camera/QrScan").then((mod) => mod.QrScan),
-  {
-    ssr: false,
-  }
-);
+const QrScan = dynamic(() => import("@/components/camera/QrScan"), {
+  ssr: false,
+});
 
 type ItemFormProps = {
   initialValues?: ItemFormValues | null;
@@ -30,7 +27,11 @@ type ItemFormProps = {
   onCancel: () => void;
 };
 
-export function ItemForm({ initialValues, onSave, onCancel }: ItemFormProps) {
+export default function ItemForm({
+  initialValues,
+  onSave,
+  onCancel,
+}: ItemFormProps) {
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemSchema),
     defaultValues: initialValues ?? {
@@ -49,13 +50,15 @@ export function ItemForm({ initialValues, onSave, onCancel }: ItemFormProps) {
       <form
         onSubmit={form.handleSubmit((values) => {
           onSave(values);
-          form.reset(initialValues ?? {
-            code: "",
-            barcode: "",
-            name: "",
-            quantity: 0,
-            image: null,
-          });
+          form.reset(
+            initialValues ?? {
+              code: "",
+              barcode: "",
+              name: "",
+              quantity: 0,
+              image: null,
+            }
+          );
         })}
         className="space-y-6 bg-white p-6 rounded-lg shadow"
       >

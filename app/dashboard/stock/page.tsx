@@ -1,4 +1,4 @@
-import { StockOverview } from '@/components/stock/StockOverview'
+import StockOverview from '@/components/stock/StockOverview'
 import React from 'react'
 
 const stock = () => {

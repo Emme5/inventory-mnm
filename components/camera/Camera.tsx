@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
-import { QrScan } from "./QrScan";
+import QrScan from "./QrScan";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Item } from "@/types/type";
 import { Scan } from "lucide-react";
 
-export function Camera() {
+export default function Camera() {
   const [open, setOpen] = useState(false);
   const [scannedItem, setScannedItem] = useState<Item | null>(null);
   const [scanOutQty, setScanOutQty] = useState(0);

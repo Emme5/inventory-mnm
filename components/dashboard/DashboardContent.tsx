@@ -1,11 +1,11 @@
-import { DashboardStats } from "./DashboardStats";
+import DashboardStats from "./DashboardStats";
 import { ManualScanOut } from "../ManualScanOut";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { ArrowDownToLine, Search } from "lucide-react";
 
-export function DashboardContent() {
+export default function DashboardContent() {
   return (
     <div className="space-y-8">
       {/* สรุปตัวเลข */}

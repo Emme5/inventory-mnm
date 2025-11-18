@@ -1,11 +1,8 @@
-import React from 'react'
+import AdjustStock from "@/components/stock/AdjustStock";
+import React from "react";
 
 const check = () => {
-  return (
-    <div>
-      This is stock check page (adjust stock)
-    </div>
-  )
-}
+  return <AdjustStock />;
+};
 
-export default check
+export default check;

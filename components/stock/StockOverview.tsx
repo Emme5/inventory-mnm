@@ -5,7 +5,7 @@ import { Item, ApiMovement } from "@/types/type";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-export function StockOverview() {
+export default function StockOverview() {
   const [search, setSearch] = useState("");
   const [stockPage, setStockPage] = useState(1);
   const [movementPage, setMovementPage] = useState(1);
@@ -74,7 +74,7 @@ export function StockOverview() {
 
         <input
           type="text"
-          placeholder="ค้นหาสินค้า..."
+          placeholder="ค้นหา..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);

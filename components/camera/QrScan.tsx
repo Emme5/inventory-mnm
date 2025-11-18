@@ -7,7 +7,7 @@ type QrScanProps = {
   onResult: (value: string) => void;
 };
 
-export function QrScan({ onResult }: QrScanProps) {
+export default function QrScan({ onResult }: QrScanProps) {
   const [result, setResult] = useState("");
   const [cameraReady, setCameraReady] = useState(false);
 

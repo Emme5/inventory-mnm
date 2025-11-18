@@ -17,6 +17,7 @@ model Item {
   createdAt DateTime        @default(now())
   barcode   String?
   movements StockMovement[]
+  checks    StockCheck[]
 }
 
 model StockMovement {
@@ -26,6 +27,17 @@ model StockMovement {
   quantity  Int
   createdAt DateTime @default(now())
   item      Item     @relation(fields: [itemId], references: [id])
+}
+
+model StockCheck {
+  id          String   @id @default(cuid())
+  itemId      String
+  actualCount Int
+  difference  Int
+  note        String?
+  checked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  item        Item     @relation(fields: [itemId], references: [id])
 }
 
 model SystemStats {

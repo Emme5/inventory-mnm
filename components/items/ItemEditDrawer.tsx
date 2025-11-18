@@ -1,7 +1,7 @@
 "use client";
 
 import { ItemFormValues } from "../schemas/ItemForm";
-import { ItemForm } from "./ItemForm";
+import ItemForm from "./ItemForm";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";

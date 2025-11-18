@@ -1,4 +1,4 @@
-import { ItemTable } from "@/components/items/ItemTable";
+import ItemTable from "@/components/items/ItemTable";
 import React from "react";
 
 const items = () => {

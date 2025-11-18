@@ -12,7 +12,13 @@ import {
   UserRound,
   Warehouse,
 } from "lucide-react";
-import { Camera } from "@/components/camera/Camera";
+import Camera from "@/components/camera/Camera";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const menuItems = [
   { label: "Home", href: "/dashboard", icon: LayoutDashboard },
@@ -22,58 +28,73 @@ const menuItems = [
   { label: "Account", href: "/dashboard/account", icon: UserRound },
 ];
 
-export function SideBar() {
+export default function SideBar() {
   const pathname = usePathname();
   const [expanded, setExpanded] = useState(false);
 
   return (
     <>
       {/* Desktop Sidebar */}
-      <motion.aside
-        initial={{ width: 70 }}
-        animate={{ width: expanded ? 200 : 70 }}
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        className="hidden md:flex md:flex-col bg-white border-r overflow-hidden"
-      >
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100"
-          title="เปิดเมนู"
+      <TooltipProvider>
+        <motion.aside
+          initial={{ width: 70 }}
+          animate={{ width: expanded ? 200 : 70 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          className="hidden md:flex md:flex-col bg-white border-r overflow-hidden"
         >
-          <PanelsTopLeft className="mx-2" size={22} />
-          {expanded && <span className="text-sm">เปิดเมนู</span>}
-        </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => setExpanded(!expanded)}
+                className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100"
+              >
+                <PanelsTopLeft className="mx-2" size={22} />
+                {expanded && <span className="text-sm"></span>}
+              </button>
+            </TooltipTrigger>
+            {!expanded && (
+              <TooltipContent side="right">เปิดเมนู</TooltipContent>
+            )}
+          </Tooltip>
 
-        <nav className="flex flex-col py-4 space-y-4">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const active = item.href ? pathname === item.href : false;
+          <nav className="flex flex-col py-4 space-y-4">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const active = item.href ? pathname === item.href : false;
 
-            if (item.label === "Camera") {
-              return <Camera key="camera" />;
-            }
+              if (item.label === "Camera") {
+                return <Camera key="camera" />;
+              }
 
-            return (
-              <Link key={item.href!} href={item.href!}>
-                <div
-                  className={`flex items-center gap-3 px-6 py-4 rounded-md transition-colors ${
-                    active
-                      ? "bg-blue-100 text-blue-600"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  <Icon size={22} />
-                  {expanded && (
-                    <span className="whitespace-nowrap text-sm">
-                      {item.label}
-                    </span>
+              return (
+                <Tooltip key={item.href!}>
+                  <TooltipTrigger asChild>
+                    <Link href={item.href!}>
+                      <div
+                        className={`flex items-center gap-3 px-6 py-4 rounded-md transition-colors ${
+                          active
+                            ? "bg-blue-100 text-blue-600"
+                            : "text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        <Icon size={22} />
+                        {expanded && (
+                          <span className="whitespace-nowrap text-sm">
+                            {item.label}
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                  </TooltipTrigger>
+                  {!expanded && (
+                    <TooltipContent side="right">{item.label}</TooltipContent>
                   )}
-                </div>
-              </Link>
-            );
-          })}
-        </nav>
-      </motion.aside>
+                </Tooltip>
+              );
+            })}
+          </nav>
+        </motion.aside>
+      </TooltipProvider>
 
       {/* Mobile Bottom Bar */}
       <motion.nav

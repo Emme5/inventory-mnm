@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { NotificationPopover } from "@/components/notification/NotificationPopover";
+import NotificationPopover from "@/components/notification/NotificationPopover";
 import { Search, UserRound } from "lucide-react";
 
-export function Navbar() {
+export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-white">
       <div className="flex h-14 items-center justify-between px-4">

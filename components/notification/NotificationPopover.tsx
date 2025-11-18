@@ -10,7 +10,7 @@ import type { ApiMovement } from "@/types/type";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowBigUp, ArrowDownToLine, BellRing } from "lucide-react";
 
-export function NotificationPopover() {
+export default function NotificationPopover() {
   const { data: notifications = [] } = useQuery<ApiMovement[]>({
     queryKey: ["notifications"],
     queryFn: async () => {
