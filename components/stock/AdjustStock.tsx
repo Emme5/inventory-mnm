@@ -1,12 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import CheckStock from "./CheckStock";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Item } from "@/types/type";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
+import CheckStock from "./CheckLayout";
+import ItemCheckForm from "./ItemCheckForm";
 
 export default function AdjustStock() {
-  const { data: items = [], isLoading } = useQuery<Item[]>({
+  const queryClient = useQueryClient();
+
+  const { data: items = [], isLoading } = useQuery({
     queryKey: ["items"],
     queryFn: async () => {
       const res = await fetch("/api/items");
@@ -15,43 +19,94 @@ export default function AdjustStock() {
     },
   });
 
+  const { data: checkedItems = [], isLoading: isCheckedLoading } = useQuery<
+    { itemId: string }[],
+    Error
+  >({
+    queryKey: ["checked"],
+    queryFn: async () => {
+      const res = await fetch("/api/checked");
+      if (!res.ok) throw new Error("Failed to fetch checked items");
+      return res.json();
+    },
+  });
+
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [notes, setNotes] = useState<Record<string, string>>({});
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
-  const handleCountChange = (id: string, value: string) =>
-    setCounts((prev) => ({ ...prev, [id]: Number(value) }));
+  const mutation = useMutation({
+    mutationFn: async (payload: {
+      itemId: string;
+      actualCount: number;
+      note?: string;
+    }) => {
+      const res = await fetch("/api/checked", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Failed to save check");
+      return res.json();
+    },
+    onSuccess: () => {
+      setSelectedItem(null);
+      queryClient.invalidateQueries({ queryKey: ["checked"] });
+    },
+  });
 
-  const handleNoteChange = (id: string, value: string) =>
-    setNotes((prev) => ({ ...prev, [id]: value }));
-
-  const handleSave = async (id: string) => {
-    const payload = {
-      itemId: id,
-      actualCount: counts[id],
-      note: notes[id],
-    };
-
-    await fetch("/api/checked", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    setChecked((prev) => ({ ...prev, [id]: true }));
+  const handleOpenDrawer = (item: Item) => {
+    setSelectedItem(item);
   };
 
-  if (isLoading) return <p>กำลังโหลดข้อมูล...</p>;
+  if (isLoading || isCheckedLoading) return <p>กำลังโหลดข้อมูล...</p>;
+
+  const checkedMap: Record<string, boolean> = {};
+  checkedItems.forEach((entry) => {
+    checkedMap[entry.itemId] = true;
+  });
 
   return (
-    <CheckStock
-      items={items}
-      counts={counts}
-      notes={notes}
-      checked={checked}
-      onCountChange={handleCountChange}
-      onNoteChange={handleNoteChange}
-      onSave={handleSave}
-    />
+    <div className="space-y-6">
+      <h2 className="text-lg font-semibold">ปรับปรุงสต็อกสินค้า</h2>
+
+      <CheckStock
+        items={items}
+        counts={counts}
+        checked={checkedMap}
+        onOpenDrawer={handleOpenDrawer}
+      />
+
+      <Drawer
+        open={!!selectedItem}
+        onOpenChange={(open) => !open && setSelectedItem(null)}
+      >
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>ตรวจเช็คสินค้า</DrawerTitle>
+          </DrawerHeader>
+          {selectedItem && (
+            <ItemCheckForm
+              item={selectedItem}
+              actualCount={counts[selectedItem.id] ?? 0}
+              note={notes[selectedItem.id] ?? ""}
+              onCountChange={(val) =>
+                setCounts((prev) => ({ ...prev, [selectedItem.id]: val }))
+              }
+              onNoteChange={(val) =>
+                setNotes((prev) => ({ ...prev, [selectedItem.id]: val }))
+              }
+              onSave={() =>
+                mutation.mutate({
+                  itemId: selectedItem.id,
+                  actualCount: counts[selectedItem.id] ?? 0,
+                  note: notes[selectedItem.id],
+                })
+              }
+            />
+          )}
+        </DrawerContent>
+      </Drawer>
+    </div>
   );
 }

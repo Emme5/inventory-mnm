@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import QrScan from "./QrScan";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";

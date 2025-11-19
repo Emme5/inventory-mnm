@@ -31,3 +31,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to save check" }, { status: 500 });
   }
 }
+
+export async function GET() {
+  const checks = await prisma.stockCheck.findMany({
+    where: { checked: true },
+    select: { itemId: true },
+  });
+
+  return NextResponse.json(checks);
+}
