@@ -48,7 +48,7 @@ export default function SideBar() {
                 onClick={() => setExpanded(!expanded)}
                 className="flex items-center gap-2 px-4 py-3 text-gray-600 hover:bg-gray-100"
               >
-                <PanelsTopLeft className="mx-2" size={22} />
+                <PanelsTopLeft className="mx-3" size={18} />
                 {expanded && <span className="text-sm"></span>}
               </button>
             </TooltipTrigger>

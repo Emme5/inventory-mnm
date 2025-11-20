@@ -1,16 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Item } from "@/types/type";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
-import CheckStock from "./CheckLayout";
 import ItemCheckForm from "./ItemCheckForm";
+import CheckLayout from "./CheckLayout";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
+type CheckedEntry = {
+  itemId: string;
+  actualCount: number;
+  note?: string;
+  createdAt: string;
+};
 export default function AdjustStock() {
   const queryClient = useQueryClient();
 
-  const { data: items = [], isLoading } = useQuery({
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [detailItem, setDetailItem] = useState<Item | null>(null);
+  const [counts, setCounts] = useState<Record<string, number>>({});
+  const [notes, setNotes] = useState<Record<string, string>>({});
+
+  const { data: items = [], isLoading } = useQuery<Item[], Error>({
     queryKey: ["items"],
     queryFn: async () => {
       const res = await fetch("/api/items");
@@ -20,7 +32,7 @@ export default function AdjustStock() {
   });
 
   const { data: checkedItems = [], isLoading: isCheckedLoading } = useQuery<
-    { itemId: string }[],
+    CheckedEntry[],
     Error
   >({
     queryKey: ["checked"],
@@ -30,10 +42,6 @@ export default function AdjustStock() {
       return res.json();
     },
   });
-
-  const [counts, setCounts] = useState<Record<string, number>>({});
-  const [notes, setNotes] = useState<Record<string, string>>({});
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
   const mutation = useMutation({
     mutationFn: async (payload: {
@@ -47,7 +55,7 @@ export default function AdjustStock() {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Failed to save check");
-      return res.json();
+      return res.json(); // API ควรคืน { itemId, actualCount, note, createdAt }
     },
     onSuccess: () => {
       setSelectedItem(null);
@@ -59,23 +67,81 @@ export default function AdjustStock() {
     setSelectedItem(item);
   };
 
-  if (isLoading || isCheckedLoading) return <p>กำลังโหลดข้อมูล...</p>;
+  const handleOpenDetail = (item: Item) => {
+    setDetailItem(item);
+  };
 
-  const checkedMap: Record<string, boolean> = {};
-  checkedItems.forEach((entry) => {
-    checkedMap[entry.itemId] = true;
-  });
+  const checkedMap = useMemo(() => {
+    const map: Record<string, boolean> = {};
+    checkedItems.forEach((e) => {
+      map[e.itemId] = true;
+    });
+    return map;
+  }, [checkedItems]);
+
+  const checkedDetailMap = useMemo(() => {
+    const map: Record<string, CheckedEntry> = {};
+    checkedItems.forEach((e) => {
+      map[e.itemId] = e;
+    });
+    return map;
+  }, [checkedItems]);
+
+  if (isLoading || isCheckedLoading) {
+    return <p>กำลังโหลดข้อมูล...</p>;
+  }
 
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-semibold">ปรับปรุงสต็อกสินค้า</h2>
 
-      <CheckStock
+      <CheckLayout
         items={items}
-        counts={counts}
+        details={checkedDetailMap}
         checked={checkedMap}
         onOpenDrawer={handleOpenDrawer}
+        onOpenDetail={handleOpenDetail}
       />
+
+      <Dialog
+        open={!!detailItem}
+        onOpenChange={(open) => !open && setDetailItem(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>รายละเอียดการเช็คสินค้า</DialogTitle>
+          </DialogHeader>
+          {detailItem &&
+            (() => {
+              const detail = checkedDetailMap[detailItem.id];
+              return detail ? (
+                <div className="space-y-4 text-sm">
+                  <p>
+                    <strong>ชื่อสินค้า:</strong> {detailItem.name}
+                  </p>
+                  <p>
+                    <strong>Barcode:</strong> {detailItem.barcode}
+                  </p>
+                  <p>
+                    <strong>จำนวนในระบบ:</strong> {detailItem.quantity}
+                  </p>
+                  <p>
+                    <strong>จำนวนที่นับจริง:</strong> {detail.actualCount}
+                  </p>
+                  <p>
+                    <strong>หมายเหตุ:</strong> {detail.note ?? "-"}
+                  </p>
+                  <p>
+                    <strong>วันที่เช็ค:</strong>{" "}
+                    {new Date(detail.createdAt).toLocaleString("th-TH")}
+                  </p>
+                </div>
+              ) : (
+                <p>ไม่พบข้อมูลการเช็คจากระบบ</p>
+              );
+            })()}
+        </DialogContent>
+      </Dialog>
 
       <Drawer
         open={!!selectedItem}

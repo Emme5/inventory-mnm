@@ -1,7 +1,5 @@
-"use client";
-
-import { useState } from "react";
 import { Item } from "@/types/type";
+import { Button } from "../ui/button";
 
 type ItemCheckFormProps = {
   item: Item;
@@ -20,20 +18,15 @@ export default function ItemCheckForm({
   onNoteChange,
   onSave,
 }: ItemCheckFormProps) {
-  const [localCount, setLocalCount] = useState(actualCount);
-  const [localNote, setLocalNote] = useState(note);
 
-  const diff = localCount - item.quantity;
+  const diff = actualCount - item.quantity;
 
-  const handleSave = () => {
-    // sync กลับไป parent //adjuststock
-    onCountChange(localCount);
-    onNoteChange(localNote);
+ const handleSave = () => {
     onSave();
   };
 
   return (
-    <div className="space-y-4 p-4 text-sm">
+    <div className="space-y-4 p-6 text-sm">
       <div>
         <strong>ชื่อสินค้า:</strong> {item.name}
       </div>
@@ -47,9 +40,9 @@ export default function ItemCheckForm({
         <strong>จำนวนที่นับจริง:</strong>
         <input
           type="number"
-          value={localCount}
-          onChange={(e) => setLocalCount(Number(e.target.value))}
-          className="ml-2 w-24 border rounded px-2 py-1"
+          value={actualCount}
+          onChange={(e) => onCountChange(Number(e.target.value))}
+          className="ml-2 w-24 border rounded px-2 py-3"
         />
       </div>
       <div>
@@ -66,19 +59,18 @@ export default function ItemCheckForm({
         <strong>หมายเหตุ:</strong>
         <input
           type="text"
-          value={localNote}
-          onChange={(e) => setLocalNote(e.target.value)}
-          placeholder="เหตุผล..."
-          className="ml-2 w-full border rounded px-2 py-1"
+          value={note}
+          onChange={(e) => onNoteChange(e.target.value)}
+          className="ml-2 w-full border rounded px-2 py-6"
         />
       </div>
       <div className="pt-2">
-        <button
+        <Button
           onClick={handleSave}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
+          className="w-full"
         >
           บันทึก
-        </button>
+        </Button>
       </div>
     </div>
   );

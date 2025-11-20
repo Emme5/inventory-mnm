@@ -28,14 +28,22 @@ export async function POST(req: Request) {
     return NextResponse.json(check);
   } catch (error) {
     console.error("Error saving stock check:", error);
-    return NextResponse.json({ error: "Failed to save check" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to save check" },
+      { status: 500 }
+    );
   }
 }
 
 export async function GET() {
   const checks = await prisma.stockCheck.findMany({
     where: { checked: true },
-    select: { itemId: true },
+    select: {
+      itemId: true,
+      actualCount: true,
+      note: true,
+      createdAt: true,
+    },
   });
 
   return NextResponse.json(checks);
