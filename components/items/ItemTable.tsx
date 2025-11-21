@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "../ui/confirm-dialog";
 import AddItemDrawer from "./AddItemDrawer";
 import ItemEditDrawer from "./ItemEditDrawer";
+import Link from "next/link";
 
 export default function ItemTable() {
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -240,11 +241,10 @@ export default function ItemTable() {
                   </ContextMenuItem>
                 )}
 
-                <ContextMenuItem
-                  className="text-gray-600"
-                  onClick={() => setEditItem(row.original)}
-                >
-                  Preview
+                <ContextMenuItem className="text-gray-600">
+                  <Link href={`/dashboard/items/${row.original.id}`}>
+                    Preview
+                  </Link>
                 </ContextMenuItem>
                 <ContextMenuItem onClick={() => setEditItem(row.original)}>
                   Edit

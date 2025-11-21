@@ -25,6 +25,14 @@ export async function POST(req: Request) {
       },
     });
 
+    await prisma.stockMovement.create({
+      data: {
+        itemId,
+        type: "adjust",        // ประเภทการเคลื่อนไหว
+        quantity: actualCount, // จำนวนที่นับจริง
+      },
+    });
+
     return NextResponse.json(check);
   } catch (error) {
     console.error("Error saving stock check:", error);

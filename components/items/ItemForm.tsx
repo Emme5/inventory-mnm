@@ -155,11 +155,18 @@ export default function ItemForm({
           )}
         />
 
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onCancel}>
+        <div className="flex gap-2 w-full">
+          <Button type="submit" className="flex-1">
+            Save
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            className="flex"
+          >
             Cancel
           </Button>
-          <Button type="submit">Save</Button>
         </div>
       </form>
     </Form>

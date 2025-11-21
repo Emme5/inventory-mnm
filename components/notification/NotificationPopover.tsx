@@ -33,7 +33,7 @@ export default function NotificationPopover() {
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-4">
+      <PopoverContent className="w-auto">
         <ScrollArea className="h-64">
           {notifications.length === 0 ? (
             <p className="text-sm text-gray-500">ไม่มีการแจ้งเตือน</p>
@@ -59,7 +59,7 @@ export default function NotificationPopover() {
                       n.quantity
                     } ชิ้น`}
                   {n.type === "adjust" &&
-                    `ปรับสินค้า ${n.item?.name ?? "ไม่พบชื่อ"} จำนวน ${
+                    `มีการปรับสินค้า ${n.item?.name ?? "ไม่พบชื่อ"} พบจำนวน ${
                       n.quantity
                     } ชิ้น`}
                 </span>

@@ -7,6 +7,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
 import ItemCheckForm from "./ItemCheckForm";
 import CheckLayout from "./CheckLayout";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { toast } from "sonner";
 
 type CheckedEntry = {
   itemId: string;
@@ -60,6 +61,8 @@ export default function AdjustStock() {
     onSuccess: () => {
       setSelectedItem(null);
       queryClient.invalidateQueries({ queryKey: ["checked"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      toast.success("บันทึกการตรวจเช็คเรียบร้อยแล้ว ✅"); // ✅ Toast แจ้งเตือน
     },
   });
 
