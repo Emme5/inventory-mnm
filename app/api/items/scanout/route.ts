@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/utils/db";
+import { sendPushNotification } from "@/utils/notification";
 
 export async function POST(req: Request) {
-  const { code, barcode, quantity } = await req.json();
+  const { code, barcode, quantity, note } = await req.json();
 
   const item = await prisma.item.findFirst({
     where: {
@@ -29,8 +30,13 @@ export async function POST(req: Request) {
 
   // บันทึก movement
   const movement = await prisma.stockMovement.create({
-    data: { itemId: item.id, type: "out", quantity },
+    data: { itemId: item.id, type: "out", quantity, note },
   });
+
+  sendPushNotification(
+    "สินค้าถูกนำออก!",
+    `${updated.name} ถูกนำออก ${quantity} ชิ้น (เหลือ ${updated.quantity})`
+  );
 
   return NextResponse.json({
     name: updated.name,

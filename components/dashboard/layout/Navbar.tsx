@@ -1,6 +1,7 @@
 import Link from "next/link";
 import NotificationPopover from "@/components/notification/NotificationPopover";
-import { Search, UserRound } from "lucide-react";
+import { UserRound } from "lucide-react";
+import PushManager from "@/components/notification/PushManager";
 
 export default function Navbar() {
   return (
@@ -26,10 +27,7 @@ export default function Navbar() {
 
         {/* Right actions */}
         <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-gray-100 rounded-full">
-            <Search size={20} />
-          </button>
-
+          <PushManager />
           <NotificationPopover />
 
           <button className="p-2 hover:bg-gray-100 rounded-full">

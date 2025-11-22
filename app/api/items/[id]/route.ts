@@ -37,6 +37,10 @@ export async function DELETE(
   console.log("DELETE id:", id);
 
   try {
+    await prisma.stockCheck.deleteMany({
+      where: { itemId: id },
+    });
+
     await prisma.stockMovement.deleteMany({
       where: { itemId: id },
     });

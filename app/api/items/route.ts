@@ -1,5 +1,6 @@
 import { prisma } from "@/utils/db";
 import { NextResponse } from "next/server";
+import { sendPushNotification } from "@/utils/notification";
 
 export async function POST(req: Request) {
   try {
@@ -35,6 +36,11 @@ export async function POST(req: Request) {
         itemId: item.id,
       },
     });
+
+    sendPushNotification(
+      "📦 รับสินค้าเข้าใหม่!",
+      `เพิ่ม "${item.name}" จำนวน ${item.quantity} ชิ้น เข้าสู่ระบบ`
+    );
 
     return NextResponse.json(item, { status: 201 });
   } catch (error) {

@@ -24,15 +24,20 @@ export default function NotificationPopover() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="relative p-2 hover:bg-gray-100 rounded-full">
+        <div
+          role="button"
+          tabIndex={0}
+          className="relative p-2 hover:bg-gray-100 rounded-full cursor-pointer"
+        >
           <BellRing size={20} />
           {notifications.length > 0 && (
             <span className="absolute top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">
               {notifications.length}
             </span>
           )}
-        </button>
+        </div>
       </PopoverTrigger>
+
       <PopoverContent className="w-auto">
         <ScrollArea className="h-64">
           {notifications.length === 0 ? (

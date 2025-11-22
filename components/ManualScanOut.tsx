@@ -9,6 +9,7 @@ export function ManualScanOut() {
   const [code, setCode] = useState("");
   const [barcode, setBarcode] = useState("");
   const [quantity, setQuantity] = useState(0);
+  const [note, setNote] = useState("");
 
   const handleScanOut = async () => {
     if ((!code && !barcode) || quantity <= 0) return;
@@ -16,7 +17,7 @@ export function ManualScanOut() {
     const res = await fetch(`/api/items/scanout`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, barcode, quantity }),
+      body: JSON.stringify({ code, barcode, quantity, note }),
     });
 
     if (res.ok) {
@@ -27,6 +28,7 @@ export function ManualScanOut() {
       setCode("");
       setBarcode("");
       setQuantity(0);
+      setNote("");
     } else {
       const data = await res.json();
 
@@ -82,8 +84,15 @@ export function ManualScanOut() {
           <Plus className="w-4 h-4" />
         </Button>
       </div>
+
+      <textarea
+        placeholder="หมายเหตุ (ใส่หรือไม่ใส่ก็ได้)"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        className="border rounded p-2 w-full"
+      />
       
-      <Button className="w-full bg-red-600 text-white" onClick={handleScanOut}>
+      <Button className="w-full bg-red-500 text-white" onClick={handleScanOut}>
         เอาของออก
       </Button>
     </div>
