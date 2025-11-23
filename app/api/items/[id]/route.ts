@@ -9,21 +9,43 @@ export async function PUT(
   const body = await req.json();
 
   try {
+    // หา item เดิมก่อน
+    const existingItem = await prisma.item.findUnique({ where: { id } });
+    if (!existingItem) {
+      return NextResponse.json({ error: "Item not found" }, { status: 404 });
+    }
+
+    // ถ้า barcode เปลี่ยน → เช็คว่ามีใครใช้ barcode นี้แล้วหรือยัง
+    if (body.barcode && body.barcode !== existingItem.barcode) {
+      const duplicate = await prisma.item.findUnique({
+        where: { barcode: body.barcode },
+      });
+      if (duplicate) {
+        return NextResponse.json(
+          { error: "Barcode already exists" },
+          { status: 400 }
+        );
+      }
+    }
+
     const updated = await prisma.item.update({
       where: { id },
       data: {
-        code: body.code,
+        sku: body.sku ?? null,
         barcode: body.barcode,
         name: body.name,
         quantity: body.quantity,
-        imageUrl: body.imageUrl,
+        minStock: body.minStock ?? existingItem.minStock ?? 2,
+        imageUrl: body.imageUrl ?? null,
+        categoryId: body.categoryId ?? null,
       },
     });
+
     return NextResponse.json(updated);
   } catch (error) {
     console.error("Update error:", error);
     return NextResponse.json(
-      { error: "Failed to update item" },
+      { error: "Failed to update item", detail: String(error) },
       { status: 500 }
     );
   }
@@ -37,17 +59,16 @@ export async function DELETE(
   console.log("DELETE id:", id);
 
   try {
-    await prisma.stockCheck.deleteMany({
-      where: { itemId: id },
-    });
+    const existingItem = await prisma.item.findUnique({ where: { id } });
+    if (!existingItem) {
+      return NextResponse.json({ error: "Item not found" }, { status: 404 });
+    }
 
-    await prisma.stockMovement.deleteMany({
-      where: { itemId: id },
-    });
+    await prisma.stockCheck.deleteMany({ where: { itemId: id } });
+    await prisma.stockMovement.deleteMany({ where: { itemId: id } });
 
-    const deleted = await prisma.item.delete({
-      where: { id },
-    });
+    const deleted = await prisma.item.delete({ where: { id } });
+
     return NextResponse.json({ success: true, deleted });
   } catch (error) {
     console.error("Delete error:", error);

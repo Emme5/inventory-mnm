@@ -9,15 +9,25 @@ datasource db {
 }
 
 model Item {
-  id        String          @id @default(cuid())
-  code      String          @unique
-  name      String
-  quantity  Int
-  imageUrl  String?
-  createdAt DateTime        @default(now())
-  barcode   String?
-  movements StockMovement[]
-  checks    StockCheck[]
+  id         String          @id @default(cuid())
+  code       String          @unique
+  sku        String?         @unique
+  name       String
+  quantity   Int
+  minStock   Int             @default(2)
+  imageUrl   String?
+  createdAt  DateTime        @default(now())
+  barcode    String?         @unique
+  category   Category?       @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  movements  StockMovement[]
+  checks     StockCheck[]
+}
+
+model Category {
+  id    String @id @default(cuid())
+  name  String
+  items Item[]
 }
 
 model StockMovement {

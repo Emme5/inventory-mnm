@@ -29,7 +29,7 @@ export default function AddItemDrawer() {
       setOpen(false);
     },
     onError: () => {
-      toast.error("เกิดข้อผิดพลาด ❌ BarCode ซ้ำ");
+      toast.error("เกิดข้อผิดพลาด ❌ BarCode หรือ SKU ซ้ำกัน");
     },
   });
 

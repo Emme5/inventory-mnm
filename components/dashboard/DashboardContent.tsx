@@ -4,11 +4,21 @@ import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { ArrowDownToLine, Search } from "lucide-react";
+import NotificationPopover from "@/components/notification/NotificationPopover";
+import PushManager from "@/components/notification/PushManager";
 
 export default function DashboardContent() {
   return (
     <div className="space-y-8">
-      {/* สรุปตัวเลข */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
+
+        <div className="flex items-center gap-3">
+          <PushManager />
+          <NotificationPopover />
+        </div>
+      </div>
+
       <DashboardStats />
 
       <Separator />
@@ -28,7 +38,7 @@ export default function DashboardContent() {
           </Button>
         </Link>
       </div>
-      
+
       <Separator />
 
       <section className="text-lg font-semibold mb-4">
@@ -38,7 +48,6 @@ export default function DashboardContent() {
 
       <Separator />
 
-      {/* ส่วนอื่น ๆ เช่น กราฟ, รายการล่าสุด */}
       <section>
         <h2 className="text-lg font-semibold mb-4">ภาพรวม</h2>
         <div className="rounded-lg border bg-white p-6 shadow-sm">

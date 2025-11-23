@@ -6,6 +6,18 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
+    if (body.barcode) {
+      const existing = await prisma.item.findUnique({
+        where: { barcode: body.barcode },
+      });
+      if (existing) {
+        return NextResponse.json(
+          { error: "Barcode already exists" },
+          { status: 400 }
+        );
+      }
+    }
+
     const lastItem = await prisma.item.findFirst({
       where: { code: { startsWith: "SMH-" } },
       orderBy: { code: "desc" },
@@ -22,10 +34,12 @@ export async function POST(req: Request) {
     const item = await prisma.item.create({
       data: {
         code: SystemCode,
+        sku: body.sku ?? null,
         barcode: body.barcode,
         name: body.name,
         quantity: body.quantity,
         imageUrl: typeof body.image === "string" ? body.image : null,
+        categoryId: body.categoryId || null,
       },
     });
 

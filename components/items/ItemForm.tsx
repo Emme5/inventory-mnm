@@ -16,6 +16,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { itemSchema, ItemFormValues } from "../schemas/ItemForm";
 import { Scan } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const QrScan = dynamic(() => import("@/components/camera/QrScan"), {
   ssr: false,
@@ -38,7 +44,10 @@ export default function ItemForm({
       code: "",
       barcode: "",
       name: "",
+      sku: "",
+      categoryId: "",
       quantity: 0,
+      minStock: 2,
       image: null,
     },
   });
@@ -55,14 +64,17 @@ export default function ItemForm({
               code: "",
               barcode: "",
               name: "",
+              sku: "",
+              categoryId: "",
               quantity: 0,
+              minStock: 2,
               image: null,
             }
           );
         })}
         className="space-y-6 bg-white p-6 rounded-lg shadow"
       >
-        {/* ID */}
+        {/* ID  ส่วนนี้ต้องการที่จะไม่ให้แสดงผลลัพธ์กำลังพิจารณา
         <FormField
           control={form.control}
           name="code"
@@ -76,71 +88,126 @@ export default function ItemForm({
               />
             </FormItem>
           )}
-        />
+        /> */}
 
         {/* Code + Scan */}
-        <FormField
-          control={form.control}
-          name="barcode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Code (Barcode)</FormLabel>
-              <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>ชื่อสินค้า</FormLabel>
                 <Input {...field} />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowScanner((p) => !p)}
-                >
-                  <Scan size={20} />
-                </Button>
-              </div>
-              {showScanner && (
-                <div className="mt-3">
-                  <QrScan
-                    onResult={(value: string) => {
-                      form.setValue("barcode", value);
-                      setShowScanner(false);
-                    }}
-                  />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* SKU + Category */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="sku"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>SKU</FormLabel>
+                <Input {...field} />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="categoryId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="เลือกหมวดหมู่" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* map categories จาก DB เป็น SelectItem */}
+                    {/* <SelectItem value={cat.id}>{cat.name}</SelectItem> */}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Initial Stock + Min Stock Alert */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="quantity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Initial Stock</FormLabel>
+                <Input
+                  type="number"
+                  {...field}
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="minStock"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Min Stock Alert</FormLabel>
+                <Input
+                  type="number"
+                  {...field}
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Barcode (span 2 columns) */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="barcode"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>Barcode</FormLabel>
+                <div className="flex gap-2">
+                  <Input {...field} />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowScanner((p) => !p)}
+                  >
+                    <Scan size={20} />
+                  </Button>
                 </div>
-              )}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                {showScanner && (
+                  <div className="mt-3">
+                    <QrScan
+                      onResult={(value: string) => {
+                        form.setValue("barcode", value);
+                        setShowScanner(false);
+                      }}
+                    />
+                  </div>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-        {/* Name */}
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>ชื่อสินค้า</FormLabel>
-              <Input {...field} />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Quantity */}
-        <FormField
-          control={form.control}
-          name="quantity"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>จำนวน</FormLabel>
-              <Input
-                type="number"
-                {...field}
-                onChange={(e) => field.onChange(e.target.valueAsNumber)}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Image Upload */}
+        {/* Image Upload กำลังพิจารณา */}
         <FormField
           control={form.control}
           name="image"

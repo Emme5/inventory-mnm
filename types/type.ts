@@ -1,10 +1,21 @@
+// ใช้สำหรับ API responses และ types ต่างๆ
 export type Item = {
   id: string;
   code: string;
+  sku?: string | null;
   barcode: string;
   name: string;
   quantity: number;
+  minStock?: number;
+  categoryId?: string | null;
+  category?: Category | null;
   imageUrl?: string | null;
+};
+
+// ใช้สำหรับหมวดหมู่สินค้า
+export type Category = {
+  id: string;
+  name: string;
 };
 
 // ใช้สำหรับประวัติการเคลื่อนไหว

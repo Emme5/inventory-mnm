@@ -11,14 +11,8 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, CopyButton } from "../ui/button";
+import { Button } from "../ui/button"; // มี CopyButton อยู่ด้วยเพิ่มในอนาคต
 import { Item } from "@/types/type";
-import {
-  ContextMenu,
-  ContextMenuTrigger,
-  ContextMenuContent,
-  ContextMenuItem,
-} from "../ui/context-menu";
 import { Input } from "../ui/input";
 import {
   DropdownMenu,
@@ -30,25 +24,22 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "../ui/confirm-dialog";
 import AddItemDrawer from "./AddItemDrawer";
 import ItemEditDrawer from "./ItemEditDrawer";
-import Link from "next/link";
 
 export default function ItemTable() {
   const [columnVisibility, setColumnVisibility] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
   const queryClient = useQueryClient();
-  const [deleteTargets, setDeleteTargets] = useState<Item[]>([]);
   const [editItem, setEditItem] = useState<Item | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Item | null>(null);
 
   const deleteMutation = useMutation({
-    mutationFn: async (ids: string[]) => {
-      for (const id of ids) {
-        const res = await fetch(`/api/items/${id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("Failed to delete item " + id);
-      }
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/items/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete item " + id);
       return { success: true };
     },
-    onSuccess: (_, ids) => {
-      toast.success(`ลบข้อมูลสำเร็จ ✅ (${ids.length} รายการ)`);
+    onSuccess: () => {
+      toast.success(`ลบข้อมูลสำเร็จ ✅`);
       queryClient.invalidateQueries({ queryKey: ["items"] });
     },
     onError: () => {
@@ -67,58 +58,51 @@ export default function ItemTable() {
 
   const columns: ColumnDef<Item>[] = [
     {
-      id: "select",
-      header: ({ table }) => (
-        <input
-          type="checkbox"
-          checked={table.getIsAllRowsSelected()}
-          onChange={table.getToggleAllRowsSelectedHandler()}
-        />
-      ),
+      accessorKey: "name",
+      header: "ชื่อสินค้า",
+      cell: ({ row }) => <span>{row.original.name}</span>,
+      filterFn: "includesString",
+    },
+    {
+      id: "skuCategory",
+      header: "SKU & Category",
       cell: ({ row }) => (
-        <input
-          type="checkbox"
-          checked={row.getIsSelected()}
-          onChange={row.getToggleSelectedHandler()}
-        />
+        <div className="flex flex-col">
+          <span className="bg-purple-200 px-2 rounded">
+            {row.original.sku ?? "-"}
+          </span>
+          <span className="text-gray-700 text-sm">
+            {row.original.category?.name ?? "-"}
+          </span>
+        </div>
       ),
     },
-    {
-      accessorKey: "code",
-      header: "ID",
-      cell: ({ row }) => <span>{row.original.code}</span>,
-      filterFn: "includesString",
-    },
-    {
-      accessorKey: "barcode",
-      header: "BarCode",
-      cell: ({ row }) => {
-        const barcode = row.original.barcode ?? "";
-        return (
-          <div className="flex items-center gap-2">
-            <span>
-              {barcode.length > 12 ? barcode.slice(0, 12) + "..." : barcode}
-            </span>
-            <CopyButton value={row.original.barcode} />
-          </div>
-        );
-      },
-      filterFn: "includesString",
-    },
-    { accessorKey: "name", header: "ชื่อสินค้า", filterFn: "includesString" },
     {
       accessorKey: "quantity",
-      header: ({ column }) => (
-        <button onClick={column.getToggleSortingHandler()}>
-          จำนวน{" "}
-          {column.getIsSorted() === "asc"
-            ? "↑"
-            : column.getIsSorted() === "desc"
-            ? "↓"
-            : "⇅"}
-        </button>
+      header: "Stock",
+      cell: ({ row }) => <span>{row.original.quantity}</span>,
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setEditItem(row.original)}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => setDeleteTarget(row.original)}
+          >
+            Delete
+          </Button>
+        </div>
       ),
-      filterFn: "includesString",
     },
   ];
 
@@ -159,7 +143,7 @@ export default function ItemTable() {
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(value)}
                 >
-                  {column.id}
+                  {column.columnDef.header as string}
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuContent>
@@ -206,68 +190,17 @@ export default function ItemTable() {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <ContextMenu key={row.id}>
-              <ContextMenuTrigger asChild>
-                <tr className="hover:bg-gray-100">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="border px-3 py-2">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              </ContextMenuTrigger>
-              <ContextMenuContent>
-                {/* คลิกขวาแล้วลบ พร้อมเงื่อนไขเมื่อลบหลายรายการ */}
-                {table.getSelectedRowModel().rows.length > 1 ? (
-                  <ContextMenuItem
-                    className="text-red-600"
-                    onClick={() =>
-                      setDeleteTargets(
-                        table.getSelectedRowModel().rows.map((r) => r.original)
-                      )
-                    }
-                  >
-                    Delete Selected
-                  </ContextMenuItem>
-                ) : (
-                  <ContextMenuItem
-                    className="text-red-600"
-                    onClick={() => setDeleteTargets([row.original])}
-                  >
-                    Delete
-                  </ContextMenuItem>
-                )}
-
-                <ContextMenuItem className="text-gray-600">
-                  <Link href={`/dashboard/items/${row.original.id}`}>
-                    Preview
-                  </Link>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={() => setEditItem(row.original)}>
-                  Edit
-                </ContextMenuItem>
-              </ContextMenuContent>
-
-              {/* Alert Modal */}
-              {deleteTargets.length > 0 && (
-                <ConfirmDialog
-                  open={deleteTargets.length > 0}
-                  onOpenChange={(open) => !open && setDeleteTargets([])}
-                  title="คุณแน่ใจหรือไม่?"
-                  description={`จะลบ ${deleteTargets.length} รายการออกจากระบบถาวร!`}
-                  onConfirm={() => {
-                    deleteMutation.mutate(deleteTargets.map((item) => item.id));
-                    setDeleteTargets([]);
-                  }}
-                />
-              )}
-            </ContextMenu>
+            <tr key={row.id} className="hover:bg-gray-100">
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} className="border px-3 py-2">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
           ))}
         </tbody>
       </table>
+
       {editItem && (
         <ItemEditDrawer
           open={!!editItem}
@@ -276,12 +209,18 @@ export default function ItemTable() {
         />
       )}
 
-      <div className="flex justify-between items-center text-sm text-gray-600">
-        <span>
-          {table.getSelectedRowModel().rows.length} of{" "}
-          {table.getRowModel().rows.length} row(s) selected.
-        </span>
-      </div>
+      {deleteTarget && (
+        <ConfirmDialog
+          open={!!deleteTarget}
+          onOpenChange={(open) => !open && setDeleteTarget(null)}
+          title="คุณแน่ใจหรือไม่?"
+          description={`จะลบ "${deleteTarget.name}" ออกจากระบบถาวร!`}
+          onConfirm={() => {
+            deleteMutation.mutate(deleteTarget.id);
+            setDeleteTarget(null);
+          }}
+        />
+      )}
     </div>
   );
 }
