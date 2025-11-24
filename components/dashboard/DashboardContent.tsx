@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowDownToLine, Search } from "lucide-react";
 import NotificationPopover from "@/components/notification/NotificationPopover";
 import PushManager from "@/components/notification/PushManager";
+import StockControl from "../StockControl";
 
 export default function DashboardContent() {
   return (
@@ -47,6 +48,8 @@ export default function DashboardContent() {
       </section>
 
       <Separator />
+
+      <StockControl />
 
       <section>
         <h2 className="text-lg font-semibold mb-4">ภาพรวม</h2>

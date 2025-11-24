@@ -188,7 +188,7 @@ export default function StockOverview() {
               <th className="border px-3 py-2">สินค้า</th>
               <th className="border px-3 py-2">ประเภท</th>
               <th className="border px-3 py-2">จำนวน</th>
-              <th className="border px-3 py-2">วันที่</th>
+              <th className="border px-3 py-2">วันที่ – เวลา</th>
             </tr>
           </thead>
           <tbody>
