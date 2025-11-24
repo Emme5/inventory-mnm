@@ -39,6 +39,9 @@ export async function PUT(
         imageUrl: body.imageUrl ?? null,
         categoryId: body.categoryId ?? null,
       },
+      include: {
+        category: true,
+      },
     });
 
     return NextResponse.json(updated);

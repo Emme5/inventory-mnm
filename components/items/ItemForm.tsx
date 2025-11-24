@@ -14,14 +14,17 @@ import {
 import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { itemSchema, ItemFormValues } from "../schemas/ItemForm";
+import { itemSchema, ItemFormValues } from "../schemas/zodForm";
 import { Scan } from "lucide-react";
 import {
   Select,
   SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useQuery } from "@tanstack/react-query";
+import AddCategory from "./AddCategory";
 
 const QrScan = dynamic(() => import("@/components/camera/QrScan"), {
   ssr: false,
@@ -52,7 +55,17 @@ export default function ItemForm({
     },
   });
 
+  const [showAddCategory, setShowAddCategory] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/categories");
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      return res.json() as Promise<{ id: string; name: string }[]>;
+    },
+  });
 
   return (
     <Form {...form}>
@@ -113,7 +126,7 @@ export default function ItemForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>SKU</FormLabel>
-                <Input {...field} />
+                <Input {...field} value={field.value ?? ""} />
                 <FormMessage />
               </FormItem>
             )}
@@ -124,18 +137,38 @@ export default function ItemForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="เลือกหมวดหมู่" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* map categories จาก DB เป็น SelectItem */}
-                    {/* <SelectItem value={cat.id}>{cat.name}</SelectItem> */}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-2">
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="เลือกหมวดหมู่" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAddCategory(true)}
+                  >
+                    + เพิ่ม
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
+          />
+
+          <AddCategory
+            open={showAddCategory}
+            onOpenChange={setShowAddCategory}
           />
         </div>
 
@@ -223,7 +256,7 @@ export default function ItemForm({
         />
 
         <div className="flex gap-2 w-full">
-          <Button type="submit" className="flex-1">
+          <Button type="submit" className="flex-1 bg-gray-800 text-white">
             Save
           </Button>
           <Button

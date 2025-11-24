@@ -41,6 +41,9 @@ export async function POST(req: Request) {
         imageUrl: typeof body.image === "string" ? body.image : null,
         categoryId: body.categoryId || null,
       },
+      include: {
+        category: true,
+      },
     });
 
     await prisma.stockMovement.create({
@@ -67,6 +70,11 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  const items = await prisma.item.findMany();
+  const items = await prisma.item.findMany({
+    include: {
+      category: true,
+    },
+    orderBy: { name: "asc" }, // optional: เรียงตามชื่อสินค้า
+  });
   return NextResponse.json(items);
 }

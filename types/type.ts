@@ -2,7 +2,7 @@
 export type Item = {
   id: string;
   code: string;
-  sku?: string | null;
+  sku?: string;
   barcode: string;
   name: string;
   quantity: number;

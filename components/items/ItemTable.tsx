@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "../ui/confirm-dialog";
 import AddItemDrawer from "./AddItemDrawer";
 import ItemEditDrawer from "./ItemEditDrawer";
+import { Pencil, Trash } from "lucide-react";
 
 export default function ItemTable() {
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -91,15 +92,19 @@ export default function ItemTable() {
             variant="outline"
             size="sm"
             onClick={() => setEditItem(row.original)}
+            className="flex items-center gap-1"
           >
-            Edit
+            <Pencil className="w-4 h-4" />
+            <span className="hidden sm:inline">Edit</span>
           </Button>
           <Button
             variant="destructive"
             size="sm"
             onClick={() => setDeleteTarget(row.original)}
+            className="flex items-center gap-1"
           >
-            Delete
+            <Trash className="w-4 h-4" />
+            <span className="hidden sm:inline">Delete</span>
           </Button>
         </div>
       ),
