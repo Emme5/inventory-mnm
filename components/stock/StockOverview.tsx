@@ -139,6 +139,10 @@ export default function StockOverview() {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
+
+                    <div className="text-gray-500 text-xs mt-1">
+                      {m.note && m.note.trim() !== "" ? m.note : "-"}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -146,16 +150,14 @@ export default function StockOverview() {
           </table>
         </section>
 
-        <section>
-          <Button
-            onClick={() => {
-              window.location.href = "/dashboard/stock/check";
-            }}
-            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-          >
-            ปรับปรุงสต็อก (Adjust)
-          </Button>
-        </section>
+        <Button
+          onClick={() => {
+            window.location.href = "/dashboard/stock/check";
+          }}
+          className="px-4 py-2 bg-fuchsia-500 text-white rounded hover:bg-fuchsia-600"
+        >
+          ปรับปรุงสต็อก (Adjust)
+        </Button>
       </div>
     </div>
   );
