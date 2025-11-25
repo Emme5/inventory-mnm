@@ -1,12 +1,10 @@
 import DashboardStats from "./DashboardStats";
-import { ManualScanOut } from "../ManualScanOut";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { ArrowDownToLine, Search } from "lucide-react";
 import NotificationPopover from "@/components/notification/NotificationPopover";
 import PushManager from "@/components/notification/PushManager";
-import StockControl from "../StockControl";
 
 export default function DashboardContent() {
   return (
@@ -39,17 +37,6 @@ export default function DashboardContent() {
           </Button>
         </Link>
       </div>
-
-      <Separator />
-
-      <section className="text-lg font-semibold mb-4">
-        <h2>เอาของออกแบบ (Manual)</h2>
-        <ManualScanOut />
-      </section>
-
-      <Separator />
-
-      <StockControl />
 
       <section>
         <h2 className="text-lg font-semibold mb-4">ภาพรวม</h2>

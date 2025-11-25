@@ -1,4 +1,4 @@
-import AdjustStock from "@/components/stock/AdjustStock";
+import AdjustStock from "@/components/stock/adjustStock/AdjustStock";
 import React from "react";
 
 const check = () => {

@@ -1,5 +1,5 @@
 import { Item } from "@/types/type";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button"; 
 
 type ItemCheckFormProps = {
   item: Item;

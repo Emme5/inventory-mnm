@@ -3,11 +3,15 @@ import { prisma } from "@/utils/db";
 import { sendPushNotification } from "@/utils/notification";
 
 export async function POST(req: Request) {
-  const { code, barcode, quantity, note } = await req.json();
+  const { code, barcode, name, quantity, note } = await req.json();
 
   const item = await prisma.item.findFirst({
     where: {
-      OR: [{ code: code ?? "" }, { barcode: barcode ?? "" }],
+      OR: [
+        { code: code ?? "" },
+        { barcode: barcode ?? "" },
+        { name: name ?? "" },
+      ],
     },
   });
 

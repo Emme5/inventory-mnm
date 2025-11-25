@@ -12,13 +12,13 @@ import {
   UserRound,
   Warehouse,
 } from "lucide-react";
-import Camera from "@/components/camera/Camera";
+import Camera from "./camera/Camera";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "./ui/tooltip";
 
 const menuItems = [
   { label: "Home", href: "/dashboard", icon: LayoutDashboard },

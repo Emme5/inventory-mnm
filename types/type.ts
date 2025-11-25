@@ -35,6 +35,13 @@ export type ItemWithMovements = Item & {
   movements: ApiMovement[];
 };
 
+// ใช้สำหรับตัวเลือกสินค้าใน dropdowns หรือการค้นหา
+export type ProductOption = {
+  id: string;
+  name: string;
+  quantity: number;
+};
+
 // ใช้สำหรับ dashboard stats
 export type Stats = {
   totalCreated: number;
