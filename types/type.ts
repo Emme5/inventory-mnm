@@ -32,9 +32,7 @@ export type ApiMovement = {
 };
 
 // รวม Item + Movements
-export type ItemWithMovements = Item & {
-  movements: ApiMovement[];
-};
+export type ItemWithMovements = Item & { movements: ApiMovement[] };
 
 // ใช้สำหรับตัวเลือกสินค้าใน dropdowns หรือการค้นหา
 export type ProductOption = {

@@ -1,3 +1,4 @@
+import PageTransition from "@/components/PageTransition";
 import SideBar from "@/components/SideBar";
 
 export default function DashboardLayout({
@@ -8,7 +9,9 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen flex">
       <SideBar />
-      <main className="flex-1 p-4 md:p-6">{children}</main>
+      <main className="flex-1 p-4 md:p-6">
+        <PageTransition>{children}</PageTransition>
+      </main>
     </div>
   );
 }
