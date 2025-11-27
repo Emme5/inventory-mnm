@@ -7,6 +7,7 @@ import { useState } from "react";
 import {
   Boxes,
   LayoutDashboard,
+  LogOut,
   PanelsTopLeft,
   Scan,
   UserRound,
@@ -19,6 +20,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { signOut } from "next-auth/react";
+import { Button } from "./ui/button";
 
 const menuItems = [
   { label: "Home", href: "/dashboard", icon: LayoutDashboard },
@@ -41,9 +44,9 @@ export default function SideBar() {
           initial={{ width: 70 }}
           animate={{ width: expanded ? 200 : 70 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="hidden md:flex md:flex-col bg-slate-900 border-r border-slate-800 text-slate-200 overflow-hidden"
+          className="hidden md:flex md:flex-col h-screen bg-slate-900 border-r border-slate-800 text-slate-200 overflow-hidden sticky top-0 left-0 z-50"
         >
-          <div className="flex items-center h-14 px-3 border-b border-slate-800">
+          <div className="flex items-center h-14 px-3 border-b border-slate-800 shrink-0">
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
@@ -60,7 +63,7 @@ export default function SideBar() {
             </Tooltip>
 
             {expanded && (
-              <div className="ml-2">
+              <div className="ml-2 overflow-hidden whitespace-nowrap">
                 <div className="text-sm font-semibold tracking-wide">
                   INVENTORY
                 </div>
@@ -72,7 +75,7 @@ export default function SideBar() {
           </div>
 
           {/* Menu */}
-          <nav className="flex flex-col gap-2 py-4">
+          <nav className="flex flex-col gap-2 py-4 flex-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const active = item.href ? pathname === item.href : false;
@@ -91,9 +94,9 @@ export default function SideBar() {
                       >
                         <Icon
                           size={22}
-                          className={
+                          className={`shrink-0 ${
                             active ? "text-blue-400" : "text-slate-300"
-                          }
+                          }`}
                         />
                         {expanded && (
                           <span className="whitespace-nowrap text-sm">
@@ -112,7 +115,7 @@ export default function SideBar() {
               return (
                 <Tooltip key={item.href!}>
                   <TooltipTrigger asChild>
-                    <Link href={item.href!}>
+                    <Link href={item.href!} className="block w-full">
                       <div
                         className={`mx-2 flex items-center gap-3 px-3 py-3 rounded-md transition-colors ${
                           active
@@ -122,9 +125,9 @@ export default function SideBar() {
                       >
                         <Icon
                           size={22}
-                          className={
+                          className={`shrink-0 ${
                             active ? "text-blue-400" : "text-slate-300"
-                          }
+                          }`}
                         />
                         {expanded && (
                           <span className="whitespace-nowrap text-sm">
@@ -145,11 +148,16 @@ export default function SideBar() {
           <Camera open={cameraOpen} onOpenChange={setCameraOpen} />
 
           {/* Footer */}
-          <div className="mt-auto border-t border-slate-800">
-            <button className="mx-2 my-2 w-[calc(100%-1rem)] flex items-center gap-3 px-3 py-2 rounded-md text-slate-300 hover:bg-slate-800/60">
-              <UserRound size={18} />
-              {expanded && <span className="text-sm">ออกจากระบบ</span>}
-            </button>
+          <div className="border-t border-b border-slate-500 p-2 bg-slate-900">
+            <Button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="w-full rounded-md text-slate-300 hover:bg-slate-800/60 hover:text-red-400 transition-colors"
+            >
+              <LogOut size={18} />
+              {expanded && (
+                <span className="text-sm whitespace-nowrap">ออกจากระบบ</span>
+              )}
+            </Button>
           </div>
         </motion.aside>
       </TooltipProvider>

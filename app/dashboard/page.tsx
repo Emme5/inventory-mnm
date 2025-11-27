@@ -1,6 +1,6 @@
 import DashboardContent from "@/components/dashboard/DashboardContent";
 
-export default function dashboard() {
+export default async function dashboard() {
   return (
     <>
       <DashboardContent />
