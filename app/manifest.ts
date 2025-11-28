@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "IMS APP",
+    name: "InventoryMNM",
     short_name: "IMS",
     description: "A Progressive Web App built with Next.js",
     start_url: "/",

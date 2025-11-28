@@ -1,4 +1,3 @@
-import PageTransition from "@/components/PageTransition";
 import SideBar from "@/components/SideBar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -19,7 +18,7 @@ export default async function DashboardLayout({
     <div className="min-h-screen flex">
       <SideBar />
       <main className="flex-1 p-4 md:p-6">
-        <PageTransition>{children}</PageTransition>
+        {children}
       </main>
     </div>
   );
