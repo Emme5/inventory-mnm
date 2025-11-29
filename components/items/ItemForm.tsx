@@ -155,7 +155,7 @@ export default function ItemForm({
                   </Select>
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="xs"
                     onClick={() => setShowAddCategory(true)}
                   >
                     + เพิ่ม

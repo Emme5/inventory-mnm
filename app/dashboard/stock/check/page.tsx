@@ -1,8 +1,5 @@
 import AdjustStock from "@/components/stock/adjustStock/AdjustStock";
-import React from "react";
 
-const check = () => {
+export default function check() {
   return <AdjustStock />;
-};
-
-export default check;
+}

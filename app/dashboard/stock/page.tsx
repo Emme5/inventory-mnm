@@ -2,9 +2,9 @@ import NotificationPopover from "@/components/notification/NotificationPopover";
 import PushManager from "@/components/notification/PushManager";
 import StockOverview from "@/components/stock/StockOverview";
 
-const stock = () => {
+export default function stock() {
   return (
-    <div className="p-6">
+    <div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-semibold mb-4">StockOverview</h1>
 
@@ -17,6 +17,4 @@ const stock = () => {
       <StockOverview />
     </div>
   );
-};
-
-export default stock;
+}
