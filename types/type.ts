@@ -56,3 +56,11 @@ export type Notification = {
   icon?: React.ReactNode;
   createdAt: Date;
 };
+
+// ใช้สำหรับผู้ใช้
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: "Staff" | "Viewer";
+};

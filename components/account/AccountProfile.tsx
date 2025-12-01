@@ -1,9 +1,49 @@
 "use client";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import PushManager from "../notification/PushManager";
-import { Button } from "../ui/button";
+import { User } from "@/types/type";
+import { toast } from "sonner";
+
+async function fetchUser(): Promise<User> {
+  const res = await fetch("/api/users");
+  if (!res.ok) throw new Error("Failed to fetch user");
+  return res.json();
+}
+
+async function updateUser(user: Partial<User>): Promise<User> {
+  const res = await fetch("/api/users", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+  if (!res.ok) throw new Error("Failed to update user");
+  return res.json();
+}
 
 export default function AccountProfile() {
+  const queryClient = useQueryClient();
+  const { data: user, isLoading } = useQuery<User>({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+  });
+
+  const mutation = useMutation({
+    mutationFn: updateUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.success("เปลี่ยนแปลงให้แล้วจ้า 🤗");
+    },
+    onError: () => {
+      toast.error("เกิดข้อผิดพลาดในการบันทึก ❌");
+    },
+  });
+
+  if (isLoading) return <p>Loading...</p>;
+  if (!user) return <p>No user session</p>;
+
+  const displayName = user.name ?? "ไม่ระบุชื่อ";
+
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold text-gray-800">
@@ -13,15 +53,13 @@ export default function AccountProfile() {
       {/* Profile Card */}
       <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row items-center gap-6">
         <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-3xl font-bold">
-          JD
+          {displayName.slice(0, 2).toUpperCase()}
         </div>
         <div className="text-center md:text-left flex-1">
-          <h3 className="text-xl font-bold text-gray-800">John Developer</h3>
-          <p className="text-gray-500">Inventory Manager</p>
+          <h3 className="text-xl font-bold text-gray-800">{displayName}</h3>
+          <p className="text-sm text-gray-500">{user.email}</p>{" "}
+          <p className="text-gray-500">{user.role}</p>
           <div className="mt-4 flex flex-wrap justify-center md:justify-start gap-3">
-            <Button className="bg-indigo-600 text-white text-sm hover:bg-indigo-700">
-              Edit Profile
-            </Button>
           </div>
         </div>
       </div>
@@ -34,33 +72,20 @@ export default function AccountProfile() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              อีเมล
-            </label>
-            <input
-              type="email"
-              value="dev@example.com"
-              disabled
-              className="w-full bg-gray-50 px-4 py-2 border border-gray-200 rounded-lg text-gray-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              เบอร์โทรศัพท์
-            </label>
-            <input
-              type="tel"
-              placeholder="0xx-xxx-xxxx"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
               บทบาท (Role)
             </label>
-            <select className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option>Manager</option>
-              <option>Staff</option>
-              <option>Viewer</option>
+            <select
+              value={user.role}
+              onChange={(e) =>
+                mutation.mutate({
+                  id: user.id,
+                  role: e.target.value as "Staff" | "Viewer",
+                })
+              }
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="Staff">Staff</option>
+              <option value="Viewer">Viewer</option>
             </select>
           </div>
         </div>
