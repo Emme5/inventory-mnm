@@ -74,7 +74,7 @@ export async function GET() {
     include: {
       category: true,
     },
-    orderBy: { name: "asc" }, // optional: เรียงตามชื่อสินค้า
+    orderBy: { name: "asc" },
   });
   return NextResponse.json(items);
 }

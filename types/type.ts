@@ -56,10 +56,3 @@ export type Notification = {
   icon?: React.ReactNode;
   createdAt: Date;
 };
-
-// ใช้สำหรับโปรไฟล์ผู้ใช้
-export type ProfileProps = {
-  name: string;
-  email: string;
-  avatarUrl?: string;
-};

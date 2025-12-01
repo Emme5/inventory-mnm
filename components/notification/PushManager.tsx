@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
-import { Bell, BellOff } from "lucide-react";
 
 // ฟังก์ชันแปลง Key
 function urlBase64ToUint8Array(base64String: string) {
@@ -20,7 +18,6 @@ function urlBase64ToUint8Array(base64String: string) {
 export default function PushManager() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [isSupported, setIsSupported] = useState(false);
 
   useEffect(() => {
@@ -38,32 +35,57 @@ export default function PushManager() {
   const subscribeToPush = async () => {
     setLoading(true);
     try {
-      const registration = await navigator.serviceWorker.register("/sw.js");
+      const registration = await navigator.serviceWorker.ready;
       const permission = await Notification.requestPermission();
 
-      if (permission === "granted") {
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(
-            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-          ),
-        });
+      if (permission !== "granted") {
+        toast.error("คุณไม่อนุญาตให้แจ้งเตือน");
+        return;
+      }
 
-        // ส่งไปเก็บที่ Server
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+        ),
+      });
+
+      await fetch("/api/subscribe", {
+        method: "POST",
+        body: JSON.stringify(subscription),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      setIsSubscribed(true);
+      toast.success("เปิดแจ้งเตือนเรียบร้อย! 🔔");
+    } catch (error) {
+      console.error("❌ Subscription error:",error);
+      toast.error("เกิดข้อผิดพลาดในการสมัคร");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const unsubscribeFromPush = async () => {
+    setLoading(true);
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+
+      if (subscription) {
+        await subscription.unsubscribe();
         await fetch("/api/subscribe", {
-          method: "POST",
+          method: "DELETE",
           body: JSON.stringify(subscription),
           headers: { "Content-Type": "application/json" },
         });
-
-        setIsSubscribed(true);
-        toast.success("เปิดแจ้งเตือนเรียบร้อย! 🔔");
-      } else {
-        toast.error("คุณไม่อนุญาตให้แจ้งเตือน");
       }
+
+      setIsSubscribed(false);
+      toast.error("ปิดแจ้งเตือนเรียบร้อย ❌");
     } catch (error) {
       console.error(error);
-      toast.error("เกิดข้อผิดพลาดในการสมัคร");
+      toast.error("เกิดข้อผิดพลาดในการยกเลิก");
     } finally {
       setLoading(false);
     }
@@ -71,19 +93,37 @@ export default function PushManager() {
 
   if (!isSupported) return null;
 
+  const togglePush = () => {
+    if (isSubscribed) {
+      unsubscribeFromPush();
+    } else {
+      subscribeToPush();
+    }
+  };
+
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={subscribeToPush}
-      disabled={isSubscribed || loading}
-      title={isSubscribed ? "แจ้งเตือนเปิดอยู่" : "เปิดการแจ้งเตือน"}
-    >
-      {isSubscribed ? (
-        <Bell className="text-green-600" size={20} />
-      ) : (
-        <BellOff className="text-gray-400" size={20} />
-      )}
-    </Button>
+    <div className="flex items-center space-x-2">
+      <label className="flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          checked={isSubscribed}
+          onChange={togglePush}
+          disabled={loading}
+          className="sr-only"
+        />
+        <div
+          className={`w-12 h-6 rounded-full transition ${
+            isSubscribed ? "bg-green-500" : "bg-gray-300"
+          }`}
+        >
+          <div
+            className={`w-6 h-6 bg-white rounded-full shadow transform transition ${
+              isSubscribed ? "translate-x-6" : "translate-x-0"
+            }`}
+          />
+        </div>
+      </label>
+      <span>{isSubscribed ? "ON" : "OFF"}</span>
+    </div>
   );
 }

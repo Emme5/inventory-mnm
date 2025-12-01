@@ -6,7 +6,6 @@ export async function POST(req: Request) {
     const subscription = await req.json();
 
     // บันทึกลง DB (ใช้ create หรือ update เผื่อเครื่องเดิมสมัครซ้ำ)
-
     await prisma.pushSubscriber.upsert({
       where: { endpoint: subscription.endpoint },
       update: {
@@ -24,5 +23,23 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Subscription error:", error);
     return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { endpoint } = await req.json();
+
+    await prisma.pushSubscriber.delete({
+      where: { endpoint },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Unsubscribe error:", error);
+    return NextResponse.json(
+      { error: "Failed to unsubscribe" },
+      { status: 500 }
+    );
   }
 }

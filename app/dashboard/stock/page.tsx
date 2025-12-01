@@ -1,5 +1,4 @@
 import NotificationPopover from "@/components/notification/NotificationPopover";
-import PushManager from "@/components/notification/PushManager";
 import StockOverview from "@/components/stock/StockOverview";
 
 export default function stock() {
@@ -9,7 +8,6 @@ export default function stock() {
         <h1 className="text-xl font-semibold mb-4">StockOverview</h1>
 
         <div className="flex items-center gap-3">
-          <PushManager />
           <NotificationPopover />
         </div>
       </div>

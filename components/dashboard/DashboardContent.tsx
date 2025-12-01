@@ -4,7 +4,6 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { ArrowDownToLine, Search } from "lucide-react";
 import NotificationPopover from "@/components/notification/NotificationPopover";
-import PushManager from "@/components/notification/PushManager";
 import MovementChart from "./MovementChart";
 
 export default function DashboardContent() {
@@ -22,7 +21,6 @@ export default function DashboardContent() {
 
         <div className="flex items-center gap-3">
           <p className="text-sm text-gray-500">Last updated: {lastUpdated}</p>
-          <PushManager />
           <NotificationPopover />
         </div>
       </div>
