@@ -81,7 +81,32 @@ export default function ItemTable() {
     {
       accessorKey: "quantity",
       header: "Stock",
-      cell: ({ row }) => <span>{row.original.quantity}</span>,
+      cell: ({ row }) => {
+        const quantity = row.original.quantity;
+        const minStock = row.original.minStock; // ต้องมี field นี้ใน row
+
+        let status = "In Stock";
+        let colorClass = "bg-green-100 text-green-700 border border-green-300";
+
+        if (quantity === 0) {
+          status = "Out of Stock";
+          colorClass = "bg-red-100 text-red-700 border border-red-300";
+        } else if (quantity <= minStock) {
+          status = "Low Stock";
+          colorClass = "bg-orange-100 text-orange-700 border border-orange-300";
+        }
+
+        return (
+          <div className="flex gap-2">
+            <span>{quantity}</span>
+            <span
+              className={`px-2 py-0.5 rounded text-xs font-medium ${colorClass}`}
+            >
+              {status}
+            </span>
+          </div>
+        );
+      }
     },
     {
       id: "actions",
@@ -178,7 +203,7 @@ export default function ItemTable() {
       </div>
 
       {/* Table */}
-      <table className="w-full border-collapse border border-gray-200 rounded-md">
+      <table className="w-full border-collapse border border-gray-200">
         <thead className="bg-gray-50">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>

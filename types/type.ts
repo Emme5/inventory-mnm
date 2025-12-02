@@ -6,7 +6,7 @@ export type Item = {
   barcode: string;
   name: string;
   quantity: number;
-  minStock?: number;
+  minStock: number;
   categoryId?: string | null;
   category?: Category | null;
   imageUrl?: string | null;
@@ -43,7 +43,7 @@ export type ProductOption = {
 
 // ใช้สำหรับ dashboard stats
 export type Stats = {
-  totalCreated: number;
+  totalReceived: number;
   totalItems: number;
   remaining: number;
   scanOut: number;

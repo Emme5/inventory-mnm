@@ -52,6 +52,7 @@ export default function ItemEditDrawer({
             initialValues={item}
             onSave={(values) => mutation.mutate(values)}
             onCancel={() => onOpenChange(false)}
+            hideQuantity={true}
           />
         </div>
       </DrawerContent>

@@ -34,12 +34,14 @@ type ItemFormProps = {
   initialValues?: ItemFormValues | null;
   onSave: (values: ItemFormValues) => void;
   onCancel: () => void;
+  hideQuantity?: boolean
 };
 
 export default function ItemForm({
   initialValues,
   onSave,
   onCancel,
+  hideQuantity = false,
 }: ItemFormProps) {
   const form = useForm<ItemFormValues>({
     resolver: zodResolver(itemSchema),
@@ -103,7 +105,6 @@ export default function ItemForm({
           )}
         /> */}
 
-        {/* Code + Scan */}
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -174,21 +175,23 @@ export default function ItemForm({
 
         {/* Initial Stock + Min Stock Alert */}
         <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="quantity"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Initial Stock</FormLabel>
-                <Input
-                  type="number"
-                  {...field}
-                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            {!hideQuantity && (
+            <FormField
+              control={form.control}
+              name="quantity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Initial Stock</FormLabel>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+           )}
           <FormField
             control={form.control}
             name="minStock"

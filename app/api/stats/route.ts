@@ -1,6 +1,5 @@
-// app/api/stats/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "@/utils/db"; 
+import { prisma } from "@/utils/db";
 
 export async function GET() {
   // จำนวนรายการ
@@ -14,15 +13,16 @@ export async function GET() {
   // สแกนออก
   const scanOutTotal = await prisma.stockMovement.aggregate({
     _sum: { quantity: true },
-    where: { type: "scanout" },
+    where: { type: "out" },
   });
 
-  // สินค้าทั้งหมด (counter ที่ไม่ลดลง)
-  const systemStats = await prisma.systemStats.findFirst();
-  const totalCreated = systemStats?.totalCreated ?? 0;
+  const scanInTotal = await prisma.stockMovement.aggregate({
+    _sum: { quantity: true },
+    where: { type: "in" }, // หรือ "scanIn" ตามที่คุณบันทึกจริง
+  });
 
   return NextResponse.json({
-    totalCreated,
+    totalReceived: scanInTotal._sum.quantity ?? 0,
     totalItems,
     remaining: remaining._sum.quantity ?? 0,
     scanOut: scanOutTotal._sum.quantity ?? 0,

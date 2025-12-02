@@ -11,16 +11,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useMemo } from "react";
-
-type Movement = {
-  id: string;
-  type: "in" | "out";
-  quantity: number;
-  createdAt: string;
-};
+import { ApiMovement } from "@/types/type";
 
 export default function MovementChart() {
-  const { data: movements = [], isLoading } = useQuery<Movement[]>({
+  const { data: movements = [], isLoading } = useQuery<ApiMovement[]>({
     queryKey: ["movements"],
     queryFn: async () => {
       const res = await fetch("/api/movements");

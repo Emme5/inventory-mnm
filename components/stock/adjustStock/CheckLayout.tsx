@@ -27,6 +27,7 @@ export default function CheckLayout({
 }: CheckLayoutProps) {
   return (
     <div className="overflow-x-auto">
+      <h2 className="text-lg font-semibold pb-4">ปรับปรุงสต็อกสินค้า</h2>
       <table className="w-full border-collapse border border-gray-300 text-sm">
         <thead className="bg-gray-100">
           <tr>

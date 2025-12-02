@@ -40,8 +40,8 @@ export default function DashboardStats() {
 
   const items = [
     {
-      label: "สินค้าทั้งหมด",
-      value: stats.totalCreated,
+      label: "จำนวนที่รับเข้ามาทั้งหมด",
+      value: stats.totalReceived ?? 0,
       icon: Boxes,
       color: "text-blue-600 bg-blue-50",
     },
@@ -58,8 +58,8 @@ export default function DashboardStats() {
       color: "text-purple-600 bg-purple-50",
     },
     {
-      label: "สแกนออก",
-      value: stats.scanOut,
+      label: "สแกนออกแล้วทั้งหมด",
+      value: stats.scanOut ?? 0,
       icon: ScanText,
       color: "text-red-600 bg-red-50",
     },

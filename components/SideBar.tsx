@@ -42,7 +42,7 @@ export default function SideBar() {
       <TooltipProvider>
         <motion.aside
           initial={{ width: 70 }}
-          animate={{ width: expanded ? 200 : 70 }}
+          animate={{ width: expanded ? 200 : 65 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="hidden md:flex md:flex-col h-screen bg-slate-900 border-r border-slate-800 text-slate-200 overflow-hidden sticky top-0 left-0 z-50"
         >
@@ -115,7 +115,7 @@ export default function SideBar() {
               return (
                 <Tooltip key={item.href!}>
                   <TooltipTrigger asChild>
-                    <Link href={item.href!} className="block w-full">
+                    <Link href={item.href!} replace className="block w-full">
                       <div
                         className={`mx-2 flex items-center gap-3 px-3 py-3 rounded-md transition-colors ${
                           active
@@ -151,7 +151,7 @@ export default function SideBar() {
           <div className="border-t border-b border-slate-500 p-2 bg-slate-900">
             <Button
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="w-full rounded-md text-slate-300 hover:bg-slate-800/60 hover:text-red-400 transition-colors"
+              className="w-full rounded-md text-slate-300 bg-red-700 hover:text-red-300 transition-colors"
             >
               <LogOut size={18} />
               {expanded && (
