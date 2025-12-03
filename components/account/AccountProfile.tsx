@@ -30,9 +30,9 @@ export default function AccountProfile() {
 
   const mutation = useMutation({
     mutationFn: updateUser,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
-      toast.success("เปลี่ยนแปลงให้แล้วจ้า 🤗");
+      toast.info(`ได้เปลี่ยนบทบาทเป็น "${data.role}" เรียบร้อย ✅`);
     },
     onError: () => {
       toast.error("เกิดข้อผิดพลาดในการบันทึก ❌");

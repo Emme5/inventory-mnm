@@ -5,7 +5,7 @@ export default async function ItemDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params; // ✅ ต้อง await ก่อน
+  const { id } = await params;
   if (!id) {
     return <p className="text-red-500">ไม่พบรหัสสินค้า</p>;
   }
