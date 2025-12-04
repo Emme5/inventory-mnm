@@ -93,27 +93,14 @@ export default function AccountProfile() {
         <div className="mt-8 border-t border-gray-100 pt-6">
           <h3 className="text-lg font-semibold mb-4 text-gray-800">
             การแจ้งเตือน (Notifications)
-          </h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
+          </h3>    
+            <div className="flex justify-between">
               <div>
                 <p className="font-medium text-gray-700">แจ้งเตือน</p>
                 <p className="text-xs text-gray-500">แจ้งเตือนทุกอย่าง</p>
               </div>
               <PushManager />
             </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-gray-700">
-                  สรุปยอดรายวันทางอีเมล
-                </p>
-                <p className="text-xs text-gray-500">ส่งรายงานทุก 8:00 น.</p>
-              </div>
-              <div className="w-12 h-6 bg-gray-300 rounded-full relative cursor-pointer">
-                <div className="w-4 h-4 bg-white rounded-full absolute left-1 top-1"></div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

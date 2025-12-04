@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { itemId, actualCount, note } = body;
+    const { itemId, actualCount, note, reason } = body;
 
     // ดึงข้อมูลสต็อกในระบบ
     const item = await prisma.item.findUnique({ where: { id: itemId } });
@@ -21,6 +21,7 @@ export async function POST(req: Request) {
         actualCount,
         difference,
         note,
+        reason,
         checked: true,
       },
     });
@@ -30,6 +31,8 @@ export async function POST(req: Request) {
         itemId,
         type: "adjust",        // ประเภทการเคลื่อนไหว
         quantity: actualCount, // จำนวนที่นับจริง
+        note,
+        reason,
       },
     });
 
@@ -50,6 +53,7 @@ export async function GET() {
       itemId: true,
       actualCount: true,
       note: true,
+      reason: true,
       createdAt: true,
     },
   });

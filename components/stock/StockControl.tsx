@@ -103,11 +103,12 @@ export default function StockControl() {
               variant="outline"
               role="combobox"
               className="w-full justify-between"
+              
             >
-              {selectedItem?.name ?? "-- Choose Product --"}
+              {selectedItem?.name ?? "-- Select Product --"}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="p-0 w-full">
+          <PopoverContent className="p-0">
             <Command>
               <CommandInput
                 placeholder="ค้นหาสินค้า..."

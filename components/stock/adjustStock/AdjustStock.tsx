@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Item } from "@/types/type";
 import {
   Drawer,
   DrawerContent,
@@ -18,13 +17,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { Item, CheckedEntry, AdjustmentReason } from "@/types/type";
 
-type CheckedEntry = {
-  itemId: string;
-  actualCount: number;
-  note?: string;
-  createdAt: string;
-};
 export default function AdjustStock() {
   const queryClient = useQueryClient();
 
@@ -32,6 +26,7 @@ export default function AdjustStock() {
   const [detailItem, setDetailItem] = useState<Item | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [notes, setNotes] = useState<Record<string, string>>({});
+  const [reasons, setReasons] = useState<Record<string, AdjustmentReason>>({});
 
   const { data: items = [], isLoading } = useQuery<Item[], Error>({
     queryKey: ["items"],
@@ -59,6 +54,7 @@ export default function AdjustStock() {
       itemId: string;
       actualCount: number;
       note?: string;
+      reason: AdjustmentReason;
     }) => {
       const res = await fetch("/api/checked", {
         method: "POST",
@@ -106,7 +102,6 @@ export default function AdjustStock() {
 
   return (
     <div className="space-y-6">
-
       <CheckLayout
         items={items}
         details={checkedDetailMap}
@@ -161,24 +156,29 @@ export default function AdjustStock() {
       >
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>ตรวจเช็คสินค้า</DrawerTitle>
+            <DrawerTitle>ปรับปรุงสต็อกสินค้า</DrawerTitle>
           </DrawerHeader>
           {selectedItem && (
             <ItemCheckForm
               item={selectedItem}
-              actualCount={counts[selectedItem.id] ?? 0}
+              actualCount={counts[selectedItem.id] ?? selectedItem.quantity}
               note={notes[selectedItem.id] ?? ""}
+              reason={reasons[selectedItem.id] ?? "cycle_count"}
               onCountChange={(val) =>
                 setCounts((prev) => ({ ...prev, [selectedItem.id]: val }))
               }
               onNoteChange={(val) =>
                 setNotes((prev) => ({ ...prev, [selectedItem.id]: val }))
               }
+              onReasonChange={(val) =>
+                setReasons((prev) => ({ ...prev, [selectedItem.id]: val }))
+              }
               onSave={() =>
                 mutation.mutate({
                   itemId: selectedItem.id,
                   actualCount: counts[selectedItem.id] ?? 0,
-                  note: notes[selectedItem.id],
+                  note: notes[selectedItem.id] ?? "",
+                  reason: (reasons[selectedItem.id] ?? "cycle_count") as AdjustmentReason,
                 })
               }
             />

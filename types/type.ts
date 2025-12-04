@@ -18,6 +18,9 @@ export type Category = {
   name: string;
 };
 
+// เหตุผลในการปรับปรุงจำนวนคงคลัง
+export type AdjustmentReason = "cycle_count" | "received" | "damaged" | "lost" | "return";
+
 // ใช้สำหรับประวัติการเคลื่อนไหว
 export type ApiMovement = {
   id: string;
@@ -25,6 +28,7 @@ export type ApiMovement = {
   quantity: number;
   createdAt: string;
   note?: string;
+  reason?: AdjustmentReason;
   item: {
     code: string;
     name: string;
@@ -33,6 +37,15 @@ export type ApiMovement = {
 
 // รวม Item + Movements
 export type ItemWithMovements = Item & { movements: ApiMovement[] };
+
+export type CheckedEntry = {
+  itemId: string;
+  actualCount: number;
+  note?: string;
+  reason?: AdjustmentReason;
+  createdAt: string;
+};
+
 
 // ใช้สำหรับตัวเลือกสินค้าใน dropdowns หรือการค้นหา
 export type ProductOption = {

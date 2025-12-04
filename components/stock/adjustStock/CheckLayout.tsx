@@ -2,25 +2,30 @@
 
 import { CheckCircle, CircleX, Eye } from "lucide-react";
 import { Item } from "@/types/type";
-
-type CheckedEntry = {
-  itemId: string;
-  actualCount: number;
-  note?: string;
-  createdAt: string;
-};
+import { CheckedEntry } from "@/types/type";
 
 type CheckLayoutProps = {
   items: Item[];
-  details: Record<string, CheckedEntry>; // ✅ ใช้ details
+  details: Record<string, CheckedEntry>;
   checked: Record<string, boolean>;
   onOpenDrawer: (item: Item) => void;
   onOpenDetail: (item: Item) => void;
 };
 
+const reasonLabels: Record<
+  "cycle_count" | "received" | "damaged" | "lost" | "return",
+  string
+> = {
+  cycle_count: "ตรวจนับประจำรอบ (Cycle Count)",
+  received: "รับสินค้าเข้า (Received)",
+  damaged: "สินค้าชำรุด/เสียหาย (Damaged)",
+  lost: "สินค้าสูญหาย (Lost)",
+  return: "รับคืน (Return)",
+};
+
 export default function CheckLayout({
   items,
-  details, // ✅ ใช้ details แทน counts
+  details,
   checked,
   onOpenDrawer,
   onOpenDetail,
@@ -35,6 +40,7 @@ export default function CheckLayout({
             <th className="border px-3 py-6">สต็อกในระบบ</th>
             <th className="border px-3 py-6">ผลต่าง</th>
             <th className="border px-3 py-6">สถานะ</th>
+            <th className="border px-3 py-6">เหตุผล</th>
           </tr>
         </thead>
         <tbody>
@@ -42,7 +48,7 @@ export default function CheckLayout({
             const detail = details[item.id];
             const actual = detail?.actualCount ?? 0;
             const diff = actual - item.quantity;
-            const isChecked = checked[item.id] ?? false; // ✅ เพิ่มตัวแปรนี้
+            const isChecked = checked[item.id] ?? false;
 
             return (
               <tr key={item.id}>
@@ -84,6 +90,9 @@ export default function CheckLayout({
                       <span>คลิกเพื่อเช็ค</span>
                     </button>
                   )}
+                </td>
+                <td className="border px-3 py-6 text-center">
+                  {detail?.reason ? reasonLabels[detail.reason] : "-"}
                 </td>
               </tr>
             );

@@ -36,6 +36,7 @@ model StockMovement {
   type      String
   quantity  Int
   note      String?
+  reason    String?
   createdAt DateTime @default(now())
   item      Item     @relation(fields: [itemId], references: [id])
 }
@@ -46,6 +47,7 @@ model StockCheck {
   actualCount Int
   difference  Int
   note        String?
+  reason      String?
   checked     Boolean  @default(false)
   createdAt   DateTime @default(now())
   item        Item     @relation(fields: [itemId], references: [id])
