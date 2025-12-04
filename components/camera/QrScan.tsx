@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useZxing } from "react-zxing";
+import { motion } from "framer-motion";
 
 type QrScanProps = {
   onResult: (value: string) => void;
@@ -14,6 +15,7 @@ export default function QrScan({ onResult }: QrScanProps) {
   const { ref } = useZxing({
     onDecodeResult(result) {
       const text = result.getText();
+      console.log("Decoded:", text);
       setResult(text);
       onResult(text);
     },
@@ -30,14 +32,19 @@ export default function QrScan({ onResult }: QrScanProps) {
       {cameraReady && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="relative w-48 h-48">
-            {/* มุมบนซ้าย */}
+            {/* กรอบมุม */}
             <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-500"></div>
-            {/* มุมบนขวา */}
             <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-500"></div>
-            {/* มุมล่างซ้าย */}
             <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-500"></div>
-            {/* มุมล่างขวา */}
             <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-500"></div>
+
+            {/* เส้น scan animation */}
+            <motion.div
+              initial={{ y: 0 }}
+              animate={{ y: ["0%", "100%"] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+              className="absolute top-0 left-0 w-full h-0.5 bg-green-500"
+            />
           </div>
         </div>
       )}

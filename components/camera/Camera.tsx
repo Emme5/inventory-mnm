@@ -36,8 +36,8 @@ export default function Camera({
 
             {!scannedItem ? (
               <QrScan
-                onResult={(code: string) => {
-                  fetch(`/api/items/${code}`)
+                onResult={(barcode: string) => {
+                  fetch(`/api/items/${barcode}`)
                     .then((res) => res.json())
                     .then((item) => {
                       setScannedItem(item);
@@ -100,7 +100,7 @@ export default function Camera({
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-xl">⚠️</span>
-                      <span>Stock ไม่ตรง กรุณา Adjust</span>
+                      <span>Stock ไม่ตรงกรุณา Adjust</span>
                     </div>
                     <Button
                       className="mt-2 bg-yellow-500 text-white hover:bg-yellow-600"
