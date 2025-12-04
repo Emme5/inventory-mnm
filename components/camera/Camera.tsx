@@ -36,12 +36,29 @@ export default function Camera({
 
             {!scannedItem ? (
               <QrScan
-                onResult={(barcode: string) => {
-                  fetch(`/api/items/${barcode}`)
-                    .then((res) => res.json())
-                    .then((item) => {
-                      setScannedItem(item);
-                      setScanOutQty(0);
+                onResult={(code: string) => {
+                  fetch(`/api/items`)
+                    .then((res) => {
+                      if (!res.ok) throw new Error("Failed to fetch items");
+                      return res.json();
+                    })
+                    .then((items) => {
+                      const found = items.find(
+                        (item: Item) =>
+                          item.code === code || item.barcode === code
+                      );
+                      if (found) {
+                        setScannedItem(found);
+                        setScanOutQty(0);
+                      } else {
+                        setScannedItem({
+                          name: "ไม่พบสินค้าในระบบ",
+                          quantity: 0,
+                        } as Item);
+                      }
+                    })
+                    .catch((err) => {
+                      console.error("Scan error:", err);
                     });
                 }}
               />
