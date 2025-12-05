@@ -21,14 +21,17 @@ export default function Home() {
             Dashboard
           </Link>
         </div>
-        
+
         <Alert>
-        <CheckCircle2Icon />
-        <AlertTitle>Success! Your changes have been saved</AlertTitle>
-        <AlertDescription>
-          This is an alert with icon, title and description.
-        </AlertDescription>
-      </Alert>
+          <CheckCircle2Icon />
+          <AlertTitle>
+            Success! Welcome to Stock\Inventory Management
+          </AlertTitle>
+          <AlertDescription>
+            Alerts & reporting for low stock, slow-moving items, or excess
+            inventory.
+          </AlertDescription>
+        </Alert>
       </div>
     </main>
   );

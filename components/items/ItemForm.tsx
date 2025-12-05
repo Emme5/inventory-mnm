@@ -144,7 +144,7 @@ export default function ItemForm({
                     onValueChange={field.onChange}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="เลือกหมวดหมู่" />
+                      <SelectValue placeholder="หมวดหมู่" />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((cat) => (

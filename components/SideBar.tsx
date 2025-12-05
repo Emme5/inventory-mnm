@@ -13,7 +13,7 @@ import {
   UserRound,
   Warehouse,
 } from "lucide-react";
-import Camera from "./camera/Camera";
+import Camera from "./camera/CameraResult";
 import {
   Tooltip,
   TooltipContent,

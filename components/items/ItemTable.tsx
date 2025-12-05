@@ -69,10 +69,10 @@ export default function ItemTable() {
       header: "SKU & Category",
       cell: ({ row }) => (
         <div className="flex flex-col">
-          <span className="bg-purple-200 px-2 rounded">
+          <span className="text-xs font-mono font-extrabold">
             {row.original.sku ?? "-"}
           </span>
-          <span className="text-gray-700 text-sm">
+          <span className="text-gray-700 text-xs">
             {row.original.category?.name ?? "-"}
           </span>
         </div>
@@ -100,7 +100,7 @@ export default function ItemTable() {
           <div className="flex gap-2">
             <span>{quantity}</span>
             <span
-              className={`px-2 py-0.5 rounded text-xs font-medium ${colorClass}`}
+              className={`px-2 py-0.5 rounded text-xs ${colorClass}`}
             >
               {status}
             </span>
@@ -115,7 +115,7 @@ export default function ItemTable() {
         <div className="flex gap-2">
           <Button
             variant="outline"
-            size="sm"
+            size="xs"
             onClick={() => setEditItem(row.original)}
             className="flex items-center gap-1"
           >
@@ -124,7 +124,7 @@ export default function ItemTable() {
           </Button>
           <Button
             variant="destructive"
-            size="sm"
+            size="xs"
             onClick={() => setDeleteTarget(row.original)}
             className="flex items-center gap-1"
           >

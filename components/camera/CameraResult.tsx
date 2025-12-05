@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import QrScan from "./QrScan";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Item } from "@/types/type";
 
-export default function Camera({
+export default function CameraResult({
   open,
   onOpenChange,
 }: {
@@ -18,20 +18,29 @@ export default function Camera({
   const [scanOutQty, setScanOutQty] = useState(0);
   const [showWarning, setShowWarning] = useState(false);
 
+  useEffect(() => {
+    if (!open) {
+      setTimeout(() => {
+      setScannedItem(null);
+      setScanOutQty(0);
+      setShowWarning(false);
+    }, 0);
+    }
+  }, [open]);
+
   return (
     <>
-      {/* Camera Dialog */}
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            exit={{ opacity: 0.1, scale: 1 }}
             transition={{ duration: 0.3 }}
             className="space-y-4"
           >
             <DialogHeader>
-              <DialogTitle>Scan สินค้า</DialogTitle>
+              <DialogTitle>Start Scan</DialogTitle>
             </DialogHeader>
 
             {!scannedItem ? (
@@ -97,10 +106,13 @@ export default function Camera({
                     if (scannedItem.quantity === 0) {
                       setShowWarning(true);
                     } else {
-                      fetch(`/api/items/${scannedItem.id}/scanout`, {
+                      fetch(`/api/items/scanout`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ quantity: scanOutQty }),
+                        body: JSON.stringify({
+                          code: scannedItem.code,
+                          quantity: scanOutQty,
+                        }),
                       });
                     }
                   }}
