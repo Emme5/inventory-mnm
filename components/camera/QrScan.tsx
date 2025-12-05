@@ -25,7 +25,7 @@ export default function QrScan({ onResult }: QrScanProps) {
     <div className="relative w-full">
       <video
         ref={ref}
-        className="w-full rounded border"
+        className="w-full rounded"
         onPlaying={() => setCameraReady(true)}
       />
 
@@ -40,10 +40,18 @@ export default function QrScan({ onResult }: QrScanProps) {
 
             {/* เส้น scan animation */}
             <motion.div
-              initial={{ y: 0 }}
-              animate={{ y: ["0%", "100%"] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-              className="absolute top-0 left-0 w-full h-0.5 bg-green-500"
+              initial={{ top: 0, opacity: 0.5 }}
+              animate={{
+                top: ["0%", "95%"], // วิ่งจากบนลงล่าง (เกือบสุดกรอบ)
+                opacity: [0.5, 1, 0.5], // สว่างขึ้นตรงกลาง แล้วจางลง
+              }}
+              transition={{
+                duration: 1.5, // ความเร็วในการวิ่ง (วินาที)
+                repeat: Infinity, // วนซ้ำตลอด
+                repeatType: "reverse", // สำคัญ: วิ่งไปแล้ววิ่งกลับ (ขึ้น-ลง)
+                ease: "linear", // ความเร็วสม่ำเสมอ
+              }}
+              className="absolute left-0 w-full h-1 bg-linear-to-r from-transparent via-red-400 to-transparent shadow-[0_0_15px_rgba(255, 0, 0, 0.8)]"
             />
           </div>
         </div>
