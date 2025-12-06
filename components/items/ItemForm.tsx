@@ -14,7 +14,7 @@ import {
 import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { itemSchema, ItemFormValues } from "../schemas/zodForm";
+import { itemSchema, ItemFormValues } from "../../schemas/zodForm";
 import { Scan } from "lucide-react";
 import {
   Select,

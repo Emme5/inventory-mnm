@@ -1,6 +1,6 @@
 "use client";
 
-import { ItemFormValues } from "../schemas/zodForm";
+import { ItemFormValues } from "../../schemas/zodForm";
 import ItemForm from "./ItemForm";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
